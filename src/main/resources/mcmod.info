@@ -1,0 +1,10 @@
+[
+{
+  "modid": "keystrokesmod",
+  "name": "Beaver Mod",
+  "description": "Beaver Skyblock Utility Mod",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "authorList": ["Hello!"]
+}
+]
