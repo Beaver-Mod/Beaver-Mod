@@ -78,7 +78,8 @@ jar {
         it.isDirectory() ? it : zipTree(it)
     }) {
         exclude 'LICENSE.txt',
-                'org/slf4j/**'
+                'org/slf4j/**',
+                'META-INF/maven/**'
     }
 
     manifest {
