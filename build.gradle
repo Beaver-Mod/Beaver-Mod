@@ -1,5 +1,3 @@
-
-// For those who want the bleeding edge
 buildscript {
     repositories {
         jcenter()
@@ -12,34 +10,89 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
-        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
+        classpath "net.minecraftforge.gradle:ForgeGradle:${project.forge_version}"
+        classpath "org.spongepowered:mixingradle:${project.mixin_version}"
+        classpath "com.github.jengelman.gradle.plugins:shadow:${project.shadow_version}"
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'org.spongepowered.mixin'
 
-/*
-// for people who want stable - not yet functional for MC 1.8.8 - we require the forgegradle 2.1 snapshot
-plugins {
-    id "net.minecraftforge.gradle.forge" version "2.0.2"
-}
-*/
+apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: "net.minecraftforge.gradle.forge"
+apply plugin: "org.spongepowered.mixin"
+apply plugin: "java"
+
 version = "1.2"
-group= "keystrokesmod" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "keystrokesmod"
 archivesBaseName = "Beaver Mod"
 
+compileJava {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+    options.encoding 'UTF-8'
+}
 
 minecraft {
-    version = "1.8.9-11.15.1.2318-1.8.9"
+    version = "${project.minecraft_version}"
     runDir = "run"
 
-    mappings = "stable_20"
+    mappings = "${project.minecraft_mappings}"
+}
+
+mixin {
+    defaultObfuscationEnv searge
+    sourceSets {
+        main {
+            ext.refMap = 'mixins.beaver.refmap.json'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://repo.spongepowered.org/maven'
+    }
+}
+
+configurations {
+    library
+    compile.extendsFrom library
 }
 
 dependencies {
+    library ("org.reflections:reflections:${project.reflections_version}") {
+        exclude module: 'slf4j-api'
+    }
+    library("org.spongepowered:mixin:${project.mixin_version}") {
+        exclude module: 'gson'
+        exclude module: 'guava'
+        exclude module: 'jarjar'
+        exclude module: 'commons-codec'
+        exclude module: 'commons-io'
+        exclude module: 'launchwrapper'
+        exclude module: 'asm-commons'
+        exclude module: 'slf4j-api'
+    }
+}
 
+jar {
+    from(configurations.library.collect {
+        it.isDirectory() ? it : zipTree(it)
+    }) {
+        exclude 'LICENSE.txt'
+    }
 
+    manifest {
+        attributes(
+                'MixinConfigs': 'mixins.beaver.json',
+                'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
+                'TweakOrder': 0,
+                "FMLCorePlugin": "keystrokesmod.mixins.MixinLoader",
+                "ForceLoadAsMod": true,
+                'FMLCorePluginContainsFMLMod': true,
+                "ModSide": "CLIENT"
+        )
+    }
 }
 
 processResources
@@ -50,12 +103,12 @@ processResources
 
 
     from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
+        include "mcmod.info"
 
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand "version":project.version, "mcversion":project.minecraft.version
     }
 
     from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+        exclude "mcmod.info"
     }
 }

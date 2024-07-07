@@ -1,3 +1,7 @@
 {
-
+  "required": true,
+  "package": "me.beavermod.mixin.impl",
+  "refmap": "mixins.beaver.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": []
 }
