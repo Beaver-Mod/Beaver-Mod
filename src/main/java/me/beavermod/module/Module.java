@@ -8,6 +8,13 @@
 
 package me.beavermod.module;
 
+import me.beavermod.module.setting.Setting;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
 public abstract class Module {
 
     public final String name;
@@ -18,7 +25,9 @@ public abstract class Module {
     private boolean enabled = false;
     private int key = 0;
 
-    public Module(String name, String description, Category category) {
+    private final List<Setting<?>> settings = new ArrayList<>();
+
+    protected Module(String name, String description, Category category) {
         this.name = name.replace(" ", "");
         this.displayName = name;
         this.description = description;
@@ -43,6 +52,14 @@ public abstract class Module {
 
     public void setKey(int key) {
         this.key = key;
+    }
+
+    public void addSettings(Setting<?>... settings) {
+        this.settings.addAll(Arrays.asList(settings));
+    }
+
+    public boolean matches(String name) {
+        return this.name.contains(name) || name.contains(this.name);
     }
 
     public enum Category {

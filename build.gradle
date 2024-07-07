@@ -60,9 +60,7 @@ configurations {
 }
 
 dependencies {
-    library ("org.reflections:reflections:${project.reflections_version}") {
-        exclude module: 'slf4j-api'
-    }
+    library "org.reflections:reflections:${project.reflections_version}"
     library("org.spongepowered:mixin:${project.mixin_version}") {
         exclude module: 'gson'
         exclude module: 'guava'
@@ -79,7 +77,8 @@ jar {
     from(configurations.library.collect {
         it.isDirectory() ? it : zipTree(it)
     }) {
-        exclude 'LICENSE.txt'
+        exclude 'LICENSE.txt',
+                'org/slf4j/**'
     }
 
     manifest {
@@ -87,7 +86,7 @@ jar {
                 'MixinConfigs': 'mixins.beaver.json',
                 'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
                 'TweakOrder': 0,
-                "FMLCorePlugin": "keystrokesmod.mixins.MixinLoader",
+                "FMLCorePlugin": "me.beavermod.mixin.MixinLoader",
                 "ForceLoadAsMod": true,
                 'FMLCorePluginContainsFMLMod': true,
                 "ModSide": "CLIENT"
