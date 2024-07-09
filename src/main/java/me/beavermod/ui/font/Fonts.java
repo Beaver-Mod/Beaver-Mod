@@ -6,13 +6,19 @@
  * distribute this file under the terms of the MIT license.
  */
 
-package me.beavermod.module.impl.combat;
+package me.beavermod.ui.font;
 
-import me.beavermod.module.Module;
+public enum Fonts {
 
-public class KillAura extends Module {
+    ARIAL("Arial", 18),
+    SEGOE("Segoe UI", 16);
 
-    public KillAura() {
-        super("Kill Aura", "Automatically attacks entities", Category.COMBAT);
+    public final String name;
+    public final int size;
+
+    Fonts(String name, int size) {
+        this.name = name;
+        this.size = size;
     }
+
 }

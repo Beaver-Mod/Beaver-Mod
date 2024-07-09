@@ -3,12 +3,14 @@
  * Copyright (c) Beaver Mod <https://github.com/Beaver-Mod/Beaver-Mod>.
  *
  * Beaver Mod is free software: permission is granted to use, modify or
- * distribute this software under the terms of the MIT license.
+ * distribute this file under the terms of the MIT license.
  */
 
 package me.beavermod;
 
+import com.google.gson.Gson;
 import me.beavermod.module.ModuleManager;
+import me.beavermod.ui.font.FontManager;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -27,6 +29,8 @@ public class Beaver {
     public static final String VERSION = "1.2";
     public static final String ACCEPTED_VERSIONS = "[1.8.9]";
 
+    public static final Gson GSON = new Gson();
+
     public static Beaver INSTANCE = null;
 
     public Minecraft mc;
@@ -39,6 +43,7 @@ public class Beaver {
         LOGGER.info("Loading Beaver Mod");
         this.mc = Minecraft.getMinecraft();
 
+        FontManager.init();
         ModuleManager.init();
     }
 

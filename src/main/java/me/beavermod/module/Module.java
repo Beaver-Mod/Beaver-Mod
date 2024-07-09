@@ -3,19 +3,24 @@
  * Copyright (c) Beaver Mod <https://github.com/Beaver-Mod/Beaver-Mod>.
  *
  * Beaver Mod is free software: permission is granted to use, modify or
- * distribute this software under the terms of the MIT license.
+ * distribute this file under the terms of the MIT license.
  */
 
 package me.beavermod.module;
 
+import me.beavermod.Beaver;
 import me.beavermod.module.setting.Setting;
+import me.beavermod.util.ChatUtil;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 public abstract class Module {
+
+    protected static Minecraft mc = Beaver.INSTANCE.mc;
 
     public final String name;
     public final String displayName;
@@ -39,11 +44,21 @@ public abstract class Module {
     }
 
     public void toggle() {
-        this.enabled = !this.enabled;
+       this.toggle(!this.enabled);
     }
 
     public void toggle(boolean enabled) {
         this.enabled = enabled;
+
+        if (this.enabled) {
+            ChatUtil.send("Enabled %s", this.name);
+            MinecraftForge.EVENT_BUS.register(this);
+            this.onEnabled();
+        } else {
+            ChatUtil.send("Disabled %s", this.name);
+            MinecraftForge.EVENT_BUS.unregister(this);
+            this.onDisabled();
+        }
     }
 
     public int getKey() {
@@ -58,14 +73,24 @@ public abstract class Module {
         this.settings.addAll(Arrays.asList(settings));
     }
 
+    public List<Setting<?>> getSettings() {
+        return settings;
+    }
+
     public boolean matches(String name) {
         return this.name.contains(name) || name.contains(this.name);
     }
 
+    public void onEnabled() {}
+    public void onDisabled() {}
+
     public enum Category {
         COMBAT("Combat"),
-        BLATANT("Blatant"),
-        VISUAL("Visual");
+        UTILITY("Utility"),
+        WORLD("World"),
+        VISUAL("Visual"),
+        OTHER("Other");
+
 
         public final String name;
 

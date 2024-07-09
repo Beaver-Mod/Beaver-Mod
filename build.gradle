@@ -71,6 +71,11 @@ dependencies {
         exclude module: 'asm-commons'
         exclude module: 'slf4j-api'
     }
+
+    library "org.luaj:luaj-jse:${project.luaj_version}"
+
+
+    implementation 'org.jetbrains:annotations:24.1.0'
 }
 
 jar {

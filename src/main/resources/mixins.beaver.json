@@ -4,6 +4,8 @@
   "refmap": "mixins.beaver.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinEntityPlayerSP"
+    "EntityPlayerSPMixin",
+    "MinecraftMixin",
+    "NetworkManagerMixin"
   ]
 }

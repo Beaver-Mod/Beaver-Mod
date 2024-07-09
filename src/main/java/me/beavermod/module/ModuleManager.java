@@ -3,12 +3,13 @@
  * Copyright (c) Beaver Mod <https://github.com/Beaver-Mod/Beaver-Mod>.
  *
  * Beaver Mod is free software: permission is granted to use, modify or
- * distribute this software under the terms of the MIT license.
+ * distribute this file under the terms of the MIT license.
  */
 
 package me.beavermod.module;
 
 import me.beavermod.Beaver;
+import me.beavermod.util.ChatUtil;
 import org.reflections.Reflections;
 
 import java.util.Comparator;
@@ -27,6 +28,7 @@ public class ModuleManager extends LinkedHashMap<Module, Class<? extends Module>
     }
 
     public void addModules() {
+        // Adds all the module classes automatically
         new Reflections("me.beavermod.module.impl").getSubTypesOf(Module.class).forEach(module -> {
             try {
                 Beaver.LOGGER.info("Add Module: {}", module.getSimpleName());
@@ -64,6 +66,15 @@ public class ModuleManager extends LinkedHashMap<Module, Class<? extends Module>
                 .filter(module -> module.matches(name))
                 .sorted(Comparator.comparing(module -> module.name))
                 .collect(Collectors.toList());
+    }
+
+    public void onKeyPress(int key) {
+        ChatUtil.send("Key Press %d", key);
+        for (Module module : keySet()) {
+            if (module.getKey() == key) {
+                module.toggle();
+            }
+        }
     }
 
 }
