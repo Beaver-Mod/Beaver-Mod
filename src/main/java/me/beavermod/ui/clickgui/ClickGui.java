@@ -22,4 +22,9 @@ public class ClickGui extends GuiScreen {
         RenderUtil.drawCircleRect(20, 20, this.width - 20, this.height - 20, 20, 0xFFFF0000);
 
     }
+
+    @Override
+    public boolean doesGuiPauseGame() {
+        return false;
+    }
 }

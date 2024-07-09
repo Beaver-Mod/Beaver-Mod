@@ -9,6 +9,7 @@
 package me.beavermod;
 
 import com.google.gson.Gson;
+import me.beavermod.command.CommandManager;
 import me.beavermod.module.ModuleManager;
 import me.beavermod.ui.font.FontManager;
 import net.minecraft.client.Minecraft;
@@ -45,6 +46,7 @@ public class Beaver {
 
         FontManager.init();
         ModuleManager.init();
+        CommandManager.init();
     }
 
 

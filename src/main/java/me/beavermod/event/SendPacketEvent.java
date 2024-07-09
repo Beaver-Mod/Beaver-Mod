@@ -23,4 +23,8 @@ public class SendPacketEvent extends Event {
         return packet;
     }
 
+    @Override
+    public boolean isCancelable() {
+        return true;
+    }
 }
