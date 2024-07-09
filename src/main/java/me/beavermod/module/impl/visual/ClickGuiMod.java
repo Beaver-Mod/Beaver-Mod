@@ -14,5 +14,6 @@ public class ClickGuiMod extends Module {
     @Override
     public void onEnabled() {
         mc.displayGuiScreen(new ClickGui());
+        this.toggle(false);
     }
 }

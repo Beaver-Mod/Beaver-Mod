@@ -10,6 +10,7 @@
 
 package me.beavermod.mixin;
 
+import me.beavermod.Beaver;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
@@ -21,6 +22,7 @@ import java.util.Map;
 public class MixinLoader implements IFMLLoadingPlugin {
 
     public MixinLoader() {
+        Beaver.LOGGER.info("Loading Mixins");
         MixinBootstrap.init();
         Mixins.addConfiguration("mixins.beaver.json");
         MixinEnvironment.getDefaultEnvironment().setSide(MixinEnvironment.Side.CLIENT);

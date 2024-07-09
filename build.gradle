@@ -36,6 +36,9 @@ minecraft {
     runDir = "run"
 
     mappings = "${project.minecraft_mappings}"
+
+    makeObfSourceJar = false
+    clientJvmArgs += '-Dfml.coreMods.load=me.beavermod.mixin.MixinLoader'
 }
 
 mixin {

@@ -51,11 +51,9 @@ public abstract class Module {
         this.enabled = enabled;
 
         if (this.enabled) {
-            ChatUtil.send("Enabled %s", this.name);
             MinecraftForge.EVENT_BUS.register(this);
             this.onEnabled();
         } else {
-            ChatUtil.send("Disabled %s", this.name);
             MinecraftForge.EVENT_BUS.unregister(this);
             this.onDisabled();
         }

@@ -65,7 +65,7 @@ public class RenderUtil {
 
         for (int i = 0; i <= 90; i += diff) {
             double x = right - radius + Math.cos(Math.toRadians(i)) * radius;
-            double y = top + radius + Math.sin(Math.toRadians(i)) * radius;
+            double y = top + radius - Math.sin(Math.toRadians(i)) * radius;
             glVertex2d(x, y);
         }
 
@@ -74,7 +74,7 @@ public class RenderUtil {
 
         for (int i = 90; i <= 180; i += diff) {
             double x = left + radius + Math.cos(Math.toRadians(i)) * radius;
-            double y = top + radius + Math.sin(Math.toRadians(i)) * radius;
+            double y = top + radius - Math.sin(Math.toRadians(i)) * radius;
             glVertex2d(x, y);
         }
 
@@ -83,7 +83,7 @@ public class RenderUtil {
 
         for (int i = 180; i <= 270; i += diff) {
             double x = left + radius + Math.cos(Math.toRadians(i)) * radius;
-            double y = bottom - radius + Math.sin(Math.toRadians(i)) * radius;
+            double y = bottom - radius - Math.sin(Math.toRadians(i)) * radius;
             glVertex2d(x, y);
         }
 
@@ -92,7 +92,7 @@ public class RenderUtil {
 
         for (int i = 270; i <= 360; i += diff) {
             double x = right - radius + Math.cos(Math.toRadians(i)) * radius;
-            double y = bottom - radius + Math.sin(Math.toRadians(i)) * radius;
+            double y = bottom - radius - Math.sin(Math.toRadians(i)) * radius;
             glVertex2d(x, y);
         }
 

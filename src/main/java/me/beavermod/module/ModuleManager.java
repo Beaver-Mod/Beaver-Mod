@@ -69,7 +69,6 @@ public class ModuleManager extends LinkedHashMap<Module, Class<? extends Module>
     }
 
     public void onKeyPress(int key) {
-        ChatUtil.send("Key Press %d", key);
         for (Module module : keySet()) {
             if (module.getKey() == key) {
                 module.toggle();
