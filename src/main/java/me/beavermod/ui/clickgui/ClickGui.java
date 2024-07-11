@@ -9,32 +9,49 @@
 package me.beavermod.ui.clickgui;
 
 import me.beavermod.module.Module;
-import me.beavermod.module.ModuleManager;
+import me.beavermod.module.setting.Setting;
+import me.beavermod.module.setting.impl.BooleanSetting;
+import me.beavermod.module.setting.impl.IntSetting;
 import me.beavermod.ui.font.FontManager;
 import me.beavermod.ui.font.Fonts;
 import me.beavermod.ui.font.TTFFontRenderer;
 import me.beavermod.util.RenderUtil;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.EnumChatFormatting;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class ClickGui extends GuiScreen {
-
-    private static Module.Category selectedCategory = Module.Category.COMBAT;
-    private static Module selectedModule = null;
-    public static TTFFontRenderer font;
-    public static TTFFontRenderer titleFont;
 
     public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
 
+    public static TTFFontRenderer font;
+    public static TTFFontRenderer headerFont;
+    public static TTFFontRenderer titleFont;
+
+    private static Module.Category selectedCategory = Module.Category.COMBAT;
+    private static final Map<Module.Category, CategoryPanel> categoryPanels = new LinkedHashMap<>();
+
     public static int left, right, top, bottom;
+    public static int categoriesWidth;
+    public static int moduleLeft;
 
     public static void init() {
         font = FontManager.getFont(Fonts.ARIAL_18);
-        titleFont = FontManager.getFont(Fonts.ARIAL_24);
+        headerFont = FontManager.getFont(Fonts.ARIAL_24);
+        titleFont = FontManager.getFont(Fonts.ARIAL_36);
+
+        categoriesWidth = fontWidth(titleFont, EnumChatFormatting.BOLD + "Beaver") + 12;
+
+        for (Module.Category category : Module.Category.values()) {
+            categoryPanels.put(category, new CategoryPanel(category));
+        }
     }
 
 
@@ -44,10 +61,7 @@ public class ClickGui extends GuiScreen {
         right = this.width + WIDTH / 2;
         top = this.height - HEIGHT / 2;
         bottom = this.height + HEIGHT / 2;
-
-        if (selectedModule == null) {
-            selectedModule = ModuleManager.INSTANCE.getInCategory(selectedCategory).get(0);
-        }
+        moduleLeft = left + categoriesWidth;
     }
 
     @Override
@@ -55,19 +69,48 @@ public class ClickGui extends GuiScreen {
         int mouseX = mouseX2 * 2;
         int mouseY = mouseY2 * 2;
 
+        CategoryPanel categoryPanel = categoryPanels.get(selectedCategory);
+
+        categoryPanel.offset += Mouse.getDWheel() / 5;
+        if (categoryPanel.offset <= 0) {
+            categoryPanel.offset = 0;
+        }
+
         GlStateManager.pushMatrix();
         GlStateManager.scale(0.5F, 0.5F, 0.5F);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        RenderUtil.scissor(left / 2.0F, top / 2.0F, WIDTH / 2.0F, HEIGHT / 2.0F);
+        RenderUtil.scissor(left / 2.0F, top / 2.0F + 0.5F, WIDTH / 2.0F, HEIGHT / 2.0F);
 
-        drawRect(left, top, right, bottom, 0xFF222222);
-        drawRect(left, top, right, top + 8 + fontHeight(titleFont), 0xFF111111);
-        drawString(font, "Beaver Mod", left + 4, top + 4, -1, true);
+        drawRect(left, top, moduleLeft, bottom, 0xFF111111);
+        drawRect(moduleLeft, top, right, bottom, 0xFF222222);
+        drawString(titleFont, EnumChatFormatting.BOLD + "Beaver", left + 6, top + 6, -1, true);
 
         int i = 0;
         for (Module.Category category : Module.Category.values()) {
-            drawString(font, category.name, left + 8, top + 16 + fontHeight(titleFont) + (4 + fontHeight(titleFont)) * i, selectedCategory == category ? 0xFF55FFFF : -1, true);
+            drawString(headerFont, category.name, left + (categoriesWidth - fontWidth(headerFont, category.name)) / 2, top + 16 + fontHeight(headerFont) * 2 + (fontHeight(headerFont) + 8) * i, selectedCategory == category ? 0xFF55FFFF : -1, true);
             i++;
+        }
+
+        int y = top + 16 - categoryPanel.offset;
+        for (ModulePanel modulePanel : categoryPanel.modulePanels) {
+            modulePanel.top = y;
+
+            // Module info
+            drawRect(moduleLeft + 16, y, right - 16, y + 60, 0xFF444444);
+            drawString(headerFont, modulePanel.module.displayName,moduleLeft + 24, y + 8, modulePanel.module.isEnabled() ? 0xFF55FFFF : -1, true);
+            drawString(font, modulePanel.module.description, moduleLeft + 24, y + 14 + fontHeight(headerFont), 0xFFAAAAAA, true);
+            y += 60;
+
+            // Settings
+            if (modulePanel.expanded) {
+                for (Setting<?> setting : modulePanel.module.getSettings()) {
+                    y = drawSetting(setting, y);
+                }
+                drawRect(moduleLeft + 16, y, right - 16, y + 8, 0xFF444444);
+            }
+
+            y += 8;
+            modulePanel.bottom = y - 4;
         }
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
@@ -76,22 +119,56 @@ public class ClickGui extends GuiScreen {
 
     }
 
-    @Override
-    protected void mouseClicked(int mouseX2, int mouseY2, int mouseButton) throws IOException {
-        int mouseX = mouseX2 * 2 - left;
-        int mouseY = mouseY2 * 2 - top;
+    public int drawSetting(Setting<?> rawSetting, int y) {
+        drawRect(left + categoriesWidth + 16, y, right - 16, y + 24, 0xFF444444);
 
-        if (mouseButton == 0) {
+        if (rawSetting instanceof BooleanSetting) {
+            BooleanSetting setting = (BooleanSetting)rawSetting;
+            drawString(font, setting.name, moduleLeft + 32, y + 16 - fontHeight(font) / 2, -1, true);
+        } else if (rawSetting instanceof IntSetting) {
+            IntSetting setting = (IntSetting)rawSetting;
+            drawString(font, setting.name, moduleLeft + 32, y + 16 - fontHeight(font) / 2, -1, true);
+        }
+
+        return y + 32;
+    }
+
+    @Override
+    public void mouseClicked(int mouseX2, int mouseY2, int mouseButton) throws IOException {
+        int mouseX = mouseX2 * 2;
+        int mouseY = mouseY2 * 2;
+
+        // No need to check + you can probably click on invisible objects
+        if (mouseY < 0 || mouseY > HEIGHT) return;
+
+        if (mouseX < left + categoriesWidth) {
+            // Categories
             int i = 0;
             for (final Module.Category category : Module.Category.values()) {
-                int y = 16 + fontHeight(titleFont) + (4 + fontHeight(titleFont)) * i;
-                if (mouseIntersecting(mouseX, mouseY, 8, y, 8 + fontWidth(titleFont, category.name), y + fontHeight(titleFont))) {
+                int y = top + 16 + fontHeight(headerFont) * 2 + (fontHeight(headerFont) + 8) * i;
+                if (mouseIntersecting(mouseX, mouseY, left, y - 4, left + categoriesWidth, y + fontHeight(headerFont) + 4)) {
                     selectedCategory = category;
                     return;
                 }
                 i++;
             }
+        } else {
+            // Modules
+            for (ModulePanel modulePanel : categoryPanels.get(selectedCategory).modulePanels) {
+                  if (mouseIntersecting(mouseX, mouseY, left + categoriesWidth + 16, modulePanel.top, right - 16, modulePanel.bottom)) {
+                      if (!modulePanel.expanded || mouseY <= modulePanel.top + 60) {
+                          if (mouseButton == 0) {
+                              modulePanel.module.toggle();
+                          } else if (mouseButton == 1) {
+                              modulePanel.expanded = !modulePanel.expanded;
+                          }
+                      } else {
+                            // TODO: settings
+                      }
+                  }
+            }
         }
+
 
     }
 
@@ -103,6 +180,7 @@ public class ClickGui extends GuiScreen {
             font.drawString(text, (float)(x / 2), (float)(y / 2), color);
         }
         GlStateManager.scale(0.5F, 0.5F, 0.5F);
+        RenderUtil.glColor(-1);
     }
 
     public static int fontWidth(TTFFontRenderer font, String str) {

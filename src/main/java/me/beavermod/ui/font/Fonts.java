@@ -11,7 +11,8 @@ package me.beavermod.ui.font;
 public enum Fonts {
 
     ARIAL_18("Arial", 18),
-    ARIAL_24("Arial", 24);
+    ARIAL_24("Arial", 24),
+    ARIAL_36("Arial", 36);
 
     public final String name;
     public final int size;
