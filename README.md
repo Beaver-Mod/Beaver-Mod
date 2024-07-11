@@ -15,7 +15,7 @@ Beaver Mod is a Minecraft utility mod for Hypixel Skyblock.<br>
 
 ### Installation
 1. Install [Minecraft Forge](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.8.9.html) for 1.8.9.
-2. Download the mod from [Releases](https://github.com/Beaver-Mod/Beaver-Mod/Releases).
+2. Download the mod from [Releases](https://github.com/Beaver-Mod/Beaver-Mod/releases).
 3. Put the mod in your mods folder.
 
 ## Contributing
