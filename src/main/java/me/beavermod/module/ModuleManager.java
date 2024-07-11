@@ -67,7 +67,13 @@ public class ModuleManager extends LinkedHashMap<Module, Class<? extends Module>
         return keySet()
                 .stream()
                 .filter(module -> module.matches(name))
-                .sorted(Comparator.comparing(module -> module.name))
+                .collect(Collectors.toList());
+    }
+
+    public List<Module> getInCategory(Module.Category category) {
+        return keySet()
+                .stream()
+                .filter(module -> module.category == category)
                 .collect(Collectors.toList());
     }
 

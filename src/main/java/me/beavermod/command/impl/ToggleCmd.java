@@ -4,6 +4,7 @@ import me.beavermod.command.Command;
 import me.beavermod.module.Module;
 import me.beavermod.module.ModuleManager;
 import me.beavermod.util.ChatUtil;
+import net.minecraft.util.EnumChatFormatting;
 
 public class ToggleCmd extends Command {
 
@@ -15,14 +16,14 @@ public class ToggleCmd extends Command {
     public void onCommand(String[] args, String rawCommand) {
 
         if (args.length < 2) {
-            ChatUtil.send("\247cMissing arguments");
+            ChatUtil.send("%sMissing arguments", EnumChatFormatting.RED);
             return;
         }
 
         Module module = ModuleManager.INSTANCE.get(args[1]);
 
         if (module == null) {
-            ChatUtil.send("\247c'%s' is not a module", args[1].toLowerCase());
+            ChatUtil.send("%s'%s' is not a module", EnumChatFormatting.RED, args[1].toLowerCase());
             return;
         }
 

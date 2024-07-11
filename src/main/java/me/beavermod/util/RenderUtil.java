@@ -8,6 +8,8 @@
 
 package me.beavermod.util;
 
+import me.beavermod.Beaver;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -39,6 +41,70 @@ public class RenderUtil {
         glDisable(GL_LINE_SMOOTH);
         glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
+    }
+
+    public static void drawOutlineCircleRect(float left, float top, float right, float bottom, float radius, float lineWidth, int color) {
+        drawOutlineCircleRect(left, top, right, bottom, radius, lineWidth, 4, color);
+    }
+
+    public static void drawOutlineCircleRect(float left, float top, float right, float bottom, float radius, float lineWidth, int diff, int color) {
+        float alpha = (color >> 24 & 0xFF) / 255.0F;
+        float red = (color >> 16 & 0xFF) / 255.0F;
+        float green = (color >> 8 & 0xFF) / 255.0F;
+        float blue = (color & 0xFF) / 255.0F;
+
+        glColor4f(red, green, blue, alpha);
+        glEnable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_LINE_SMOOTH);
+        glPushMatrix();
+        glLineWidth(lineWidth);
+        glBegin(GL_LINE_STRIP);
+
+        glVertex2d(right, bottom - radius);
+        glVertex2d(right, top + radius);
+
+        for (int i = 0; i <= 90; i += diff) {
+            double x = right - radius + Math.cos(Math.toRadians(i)) * radius;
+            double y = top + radius - Math.sin(Math.toRadians(i)) * radius;
+            glVertex2d(x, y);
+        }
+
+        glVertex2d(right - radius, top);
+        glVertex2d(left + radius, top);
+
+        for (int i = 90; i <= 180; i += diff) {
+            double x = left + radius + Math.cos(Math.toRadians(i)) * radius;
+            double y = top + radius - Math.sin(Math.toRadians(i)) * radius;
+            glVertex2d(x, y);
+        }
+
+        glVertex2d(left, top + radius);
+        glVertex2d(left, bottom - radius);
+
+        for (int i = 180; i <= 270; i += diff) {
+            double x = left + radius + Math.cos(Math.toRadians(i)) * radius;
+            double y = bottom - radius - Math.sin(Math.toRadians(i)) * radius;
+            glVertex2d(x, y);
+        }
+
+        glVertex2d(left + radius, bottom);
+        glVertex2d(right - radius, bottom);
+
+        for (int i = 270; i <= 360; i += diff) {
+            double x = right - radius + Math.cos(Math.toRadians(i)) * radius;
+            double y = bottom - radius - Math.sin(Math.toRadians(i)) * radius;
+            glVertex2d(x, y);
+        }
+
+        glVertex2d(right, bottom - radius);
+
+        glEnd();
+        glPopMatrix();
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_LINE_SMOOTH);
+        glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     public static void drawCircleRect(float left, float top, float right, float bottom, float radius, int color) {
@@ -116,6 +182,20 @@ public class RenderUtil {
         int blue = color & 0xFF;
 
         glColor(red, green, blue, alpha);
+    }
+
+    public static void scissor(double x, double y, double width, double height) {
+        final ScaledResolution sr = new ScaledResolution(Beaver.INSTANCE.mc);
+        final double scale = sr.getScaleFactor();
+
+        y = sr.getScaledHeight() - y;
+
+        x *= scale;
+        y *= scale;
+        width *= scale;
+        height *= scale;
+
+        glScissor((int) x, (int) (y - height), (int) width, (int) height);
     }
 
 }

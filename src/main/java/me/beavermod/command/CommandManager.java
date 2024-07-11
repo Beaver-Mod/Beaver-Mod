@@ -5,6 +5,7 @@ import me.beavermod.Beaver;
 import me.beavermod.event.SendPacketEvent;
 import me.beavermod.util.ChatUtil;
 import net.minecraft.network.play.client.C01PacketChatMessage;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.reflections.Reflections;
@@ -51,13 +52,13 @@ public class CommandManager extends LinkedHashMap<Command, Class<? extends Comma
                         try {
                             command.onCommand(args, message);
                         } catch (Exception exception) {
-                            ChatUtil.send("\247cError: %s", exception.getMessage());
+                            ChatUtil.send("%sError: %s", EnumChatFormatting.RED, exception.getMessage());
                         }
                         return;
                     }
                 }
 
-                ChatUtil.send("\247c'%s' is not a command", commandName.toLowerCase());
+                ChatUtil.send("%s'%s' is not a command", EnumChatFormatting.RED, commandName.toLowerCase());
 
             }
         }

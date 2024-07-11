@@ -10,8 +10,8 @@ package me.beavermod.ui.font;
 
 public enum Fonts {
 
-    ARIAL("Arial", 18),
-    SEGOE("Segoe UI", 16);
+    ARIAL_18("Arial", 18),
+    ARIAL_24("Arial", 24);
 
     public final String name;
     public final int size;

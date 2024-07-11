@@ -11,11 +11,14 @@ package me.beavermod;
 import com.google.gson.Gson;
 import me.beavermod.command.CommandManager;
 import me.beavermod.module.ModuleManager;
+import me.beavermod.ui.clickgui.ClickGui;
 import me.beavermod.ui.font.FontManager;
+import me.beavermod.util.Reflection;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,16 +40,20 @@ public class Beaver {
     public Minecraft mc;
 
     @EventHandler
-    public void init(FMLInitializationEvent event) {
-
+    public void preInit(FMLPreInitializationEvent event) {
         INSTANCE = this;
+    }
 
+    @EventHandler
+    public void init(FMLInitializationEvent event) {
         LOGGER.info("Loading Beaver Mod");
         this.mc = Minecraft.getMinecraft();
 
+        Reflection.init();
         FontManager.init();
         ModuleManager.init();
         CommandManager.init();
+        ClickGui.init();
     }
 
 

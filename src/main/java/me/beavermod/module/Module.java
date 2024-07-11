@@ -10,7 +10,6 @@ package me.beavermod.module;
 
 import me.beavermod.Beaver;
 import me.beavermod.module.setting.Setting;
-import me.beavermod.util.ChatUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -84,11 +83,10 @@ public abstract class Module {
 
     public enum Category {
         COMBAT("Combat"),
+        MACRO("Macro"),
         UTILITY("Utility"),
-        WORLD("World"),
         VISUAL("Visual"),
-        OTHER("Other");
-
+        SCRIPT("Script");
 
         public final String name;
 
