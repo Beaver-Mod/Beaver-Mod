@@ -1,4 +1,4 @@
-package me.beavermod.module.setting.annotation;
+package me.beavermod.module.setting.util;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

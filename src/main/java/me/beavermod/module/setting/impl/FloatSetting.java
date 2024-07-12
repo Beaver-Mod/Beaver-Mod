@@ -2,27 +2,29 @@ package me.beavermod.module.setting.impl;
 
 import com.google.gson.JsonObject;
 import me.beavermod.module.setting.Setting;
+import me.beavermod.module.setting.util.IChanged;
 
 import java.text.DecimalFormat;
 
-public class FloatSetting extends Setting<Float> {
+public class FloatSetting extends NumberSetting<Float> {
 
     private float value;
     public final float min, max;
     public DecimalFormat format;
 
-    public FloatSetting(String name, String description, float min, float max, float defaultValue, DecimalFormat format) {
-        super(name, description);
+    public FloatSetting(String name, String description, float min, float max, float defaultValue, DecimalFormat format, IChanged onChanged) {
+        super(name, description, onChanged);
 
         if (min > max) throw new IllegalArgumentException("Minimum value must be smaller than maximum value");
 
         this.min = min;
         this.max = max;
         this.value = defaultValue;
+        this.format = format;
     }
 
     public FloatSetting(String name, String description, float min, float max, float defaultValue) {
-        this(name, description, min, max, defaultValue, DEFAULT_DECIMAL_FORMAT);
+        this(name, description, min, max, defaultValue, DEFAULT_DECIMAL_FORMAT, null);
     }
 
     @Override
@@ -35,6 +37,10 @@ public class FloatSetting extends Setting<Float> {
         this.value = value;
         if (this.value < min) this.value = min;
         else if (this.value > max) this.value = max;
+
+        if (onChanged != null) {
+            onChanged.onChanged();
+        }
     }
 
     @Override
@@ -57,5 +63,15 @@ public class FloatSetting extends Setting<Float> {
     @Override
     public void deserialize(JsonObject object) {
         this.value = object.get(this.name).getAsFloat();
+    }
+
+    @Override
+    public Float getRange() {
+        return max - min;
+    }
+
+    @Override
+    public float getPercent() {
+        return value / (max - min);
     }
 }

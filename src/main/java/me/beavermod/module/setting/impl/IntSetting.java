@@ -2,15 +2,16 @@ package me.beavermod.module.setting.impl;
 
 import com.google.gson.JsonObject;
 import me.beavermod.module.setting.Setting;
+import me.beavermod.module.setting.util.IChanged;
 
-public class IntSetting extends Setting<Integer> {
+public class IntSetting extends NumberSetting<Integer> {
 
     private int value;
     public final int min, max;
     public final String format;
 
-    public IntSetting(String name, String description, int min, int max, int defaultValue, String format) {
-        super(name, description);
+    public IntSetting(String name, String description, int min, int max, int defaultValue, String format, IChanged onChange) {
+        super(name, description, onChange);
 
         if (min > max) throw new IllegalArgumentException("Minimum value must be smaller than maximum value");
 
@@ -21,7 +22,7 @@ public class IntSetting extends Setting<Integer> {
     }
 
     public IntSetting(String name, String description, int min, int max, int defaultValue) {
-        this(name, description, min, max, defaultValue, "%d");
+        this(name, description, min, max, defaultValue, "%d", null);
     }
 
     @Override
@@ -34,6 +35,10 @@ public class IntSetting extends Setting<Integer> {
         this.value = value;
         if (this.value < min) this.value = min;
         else if (this.value > max) this.value = max;
+
+        if (onChanged != null) {
+            onChanged.onChanged();
+        }
     }
 
     @Override
@@ -56,5 +61,15 @@ public class IntSetting extends Setting<Integer> {
     @Override
     public void deserialize(JsonObject object) {
         this.value = object.get(this.name).getAsInt();
+    }
+
+    @Override
+    public Integer getRange() {
+        return max - min;
+    }
+
+    @Override
+    public float getPercent() {
+        return (float)value / (float)(max - min);
     }
 }

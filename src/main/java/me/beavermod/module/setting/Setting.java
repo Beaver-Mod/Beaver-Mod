@@ -9,6 +9,7 @@
 package me.beavermod.module.setting;
 
 import com.google.gson.JsonObject;
+import me.beavermod.module.setting.util.IChanged;
 
 import java.text.DecimalFormat;
 
@@ -19,10 +20,18 @@ public abstract class Setting<T> {
     public final String name;
     public final String description;
 
+    protected final IChanged onChanged;
 
     public Setting(String name, String description) {
         this.name = name;
         this.description = description;
+        onChanged = null;
+    }
+
+    public Setting(String name, String description, IChanged onChanged) {
+        this.name = name;
+        this.description = description;
+        this.onChanged = onChanged;
     }
 
     public abstract T get();

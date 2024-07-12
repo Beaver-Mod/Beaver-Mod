@@ -2,7 +2,7 @@ package me.beavermod.module.setting.impl;
 
 import com.google.gson.JsonObject;
 import me.beavermod.module.setting.Setting;
-import me.beavermod.module.setting.annotation.DisplayName;
+import me.beavermod.module.setting.util.DisplayName;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 

@@ -74,6 +74,13 @@ public abstract class Module {
         return settings;
     }
 
+    public Setting<?> getSetting(String name) {
+        return settings.stream()
+                .filter(setting -> setting.name.equalsIgnoreCase(name))
+                .findFirst()
+                .orElse(null);
+    }
+
     public boolean matches(String name) {
         return this.name.contains(name) || name.contains(this.name);
     }

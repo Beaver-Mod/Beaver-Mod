@@ -30,6 +30,10 @@ public class BooleanSetting extends Setting<Boolean> {
         this.value = value;
     }
 
+    public void toggle() {
+        value = !value;
+    }
+
     @Override
     public void parseString(String str) {
         this.value = str.equalsIgnoreCase("true") || str.equalsIgnoreCase("1");
