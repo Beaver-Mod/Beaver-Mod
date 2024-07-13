@@ -17,6 +17,7 @@ import me.beavermod.util.RenderUtil;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.EnumChatFormatting;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -45,6 +46,7 @@ public class ClickGui extends GuiScreen {
     public static int mouseX, mouseY;
 
     public static SettingPanel selectedPanel = null;
+    public static ModulePanel keybindListener = null;
 
     public static String toolTip = null;
 
@@ -70,16 +72,25 @@ public class ClickGui extends GuiScreen {
         moduleLeft = left + categoriesWidth;
 
         toolTip = null;
+        selectedPanel = null;
+        keybindListener = null;
     }
 
     @Override
     public void drawScreen(int mouseX2, int mouseY2, float partialTicks) {
-        mouseX = mouseX2 * 2;
-        mouseY = mouseY2 * 2;
+        mouseX = mouseX2 * mc.gameSettings.guiScale;
+        mouseY = mouseY2 * mc.gameSettings.guiScale;
+
+        float scale = (float)mc.gameSettings.guiScale;
+        float inverseScale = 1.0F / scale;
 
         toolTip = null;
 
         CategoryPanel categoryPanel = categoryPanels.get(selectedCategory);
+
+        if (keybindListener != null && keybindListener.module.category != selectedCategory) {
+            keybindListener = null;
+        }
 
         categoryPanel.offset += Mouse.getDWheel() / 5;
         if (categoryPanel.offset <= 0) {
@@ -87,9 +98,9 @@ public class ClickGui extends GuiScreen {
         }
 
         GlStateManager.pushMatrix();
-        GlStateManager.scale(0.5F, 0.5F, 0.5F);
+        GlStateManager.scale(inverseScale, inverseScale, inverseScale);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        RenderUtil.scissor(left / 2.0F, top / 2.0F + 0.5F, WIDTH / 2.0F, HEIGHT / 2.0F);
+        RenderUtil.scissor(left / scale, top / scale + 0.5F, WIDTH / scale, HEIGHT / scale);
 
         drawRect(left, top, moduleLeft, bottom, 0xFF111111);
         drawRect(moduleLeft, top, right, bottom, 0xFF222222);
@@ -113,10 +124,24 @@ public class ClickGui extends GuiScreen {
 
             // Settings
             if (modulePanel.expanded) {
+
+                // Key Bind
+                modulePanel.bindPos = y;
+                String bindName = modulePanel.getBindText();
+
+                drawRect(moduleLeft + 16, y, right - 16, y + 32, 0xFF444444);
+                RenderUtil.drawCircleRect(right - 34 - fontWidth(font, bindName), y + 14 - Math.round(fontHeight(font) / 2.0F), right - 30, y + 18 + Math.round(fontHeight(font) / 2.0F), 4, 0xFF222222);
+                drawString(font, "Key Bind", moduleLeft + 32, y + 16 - fontHeight(font) / 2, -1, true);
+                drawString(font, bindName, right - 32 - fontWidth(font, bindName), y + 16 - fontHeight(font) / 2, -1, true);
+
+                y += 32;
+
                 for (SettingPanel panel : modulePanel.settingPanels) {
                     y = drawSetting(panel, y);
                 }
                 RenderUtil.glColor(-1);
+            } else if (keybindListener == modulePanel) {
+                keybindListener = null;
             }
 
             y += 8;
@@ -143,17 +168,18 @@ public class ClickGui extends GuiScreen {
             BooleanSetting setting = (BooleanSetting)panel.setting;
 
             drawRect(left + categoriesWidth + 16, y, right - 16, y + 32, 0xFF444444);
-            drawString(font, setting.name, moduleLeft + 32, y + 16 - fontHeight(font) / 2, -1, true);
-            if (mouseIntersecting(mouseX, mouseY,
-                    moduleLeft + 32,
-                    y + 16  - fontHeight(font) / 2,
-                    moduleLeft + 32 + fontWidth(font, setting.name),
-                    y + 16  - fontHeight(font) / 2 + fontHeight(font))) {
-                toolTip = setting.description;
-            }
 
             RenderUtil.drawCircleRect(right - 80, y + 4, right - 32, y + 28, 12, 0xFF222222);
             RenderUtil.drawCircle(right - (setting.get() ? 44 : 68), y + 16, 10, setting.get() ? 0xFF55FFFF : 0xFFAAAAAA);
+
+            drawString(font, setting.displayName, moduleLeft + 32, y + 16 - fontHeight(font) / 2, -1, true);
+            if (mouseIntersecting(mouseX, mouseY,
+                    moduleLeft + 32,
+                    y + 16  - fontHeight(font) / 2,
+                    moduleLeft + 32 + fontWidth(font, setting.displayName),
+                    y + 16  - fontHeight(font) / 2 + fontHeight(font))) {
+                toolTip = setting.description;
+            }
 
             return panel.bottom = y + 32;
 
@@ -161,11 +187,11 @@ public class ClickGui extends GuiScreen {
             NumberSetting<?> setting = (NumberSetting<?>)panel.setting;
 
             drawRect(left + categoriesWidth + 16, y, right - 16, y + 32, 0xFF444444);
-            drawString(font, setting.name, moduleLeft + 32, y + 16 - fontHeight(font) / 2, -1, true);
+            drawString(font, setting.displayName, moduleLeft + 32, y + 16 - fontHeight(font) / 2, -1, true);
             if (mouseIntersecting(mouseX, mouseY,
                     moduleLeft + 32,
                     y + 16  - fontHeight(font) / 2,
-                    moduleLeft + 32 + fontWidth(font, setting.name),
+                    moduleLeft + 32 + fontWidth(font, setting.displayName),
                     y + 16  - fontHeight(font) / 2 + fontHeight(font))) {
                 toolTip = setting.description;
             }
@@ -182,15 +208,16 @@ public class ClickGui extends GuiScreen {
             EnumSetting<?> setting = (EnumSetting<?>)panel.setting;
 
             drawRect(left + categoriesWidth + 16, y, right - 16, y + 32, 0xFF444444);
-            drawString(font, setting.name, moduleLeft + 32, y + 16 - fontHeight(font) / 2, -1, true);
+            drawString(font, setting.displayName, moduleLeft + 32, y + 16 - fontHeight(font) / 2, -1, true);
             if (mouseIntersecting(mouseX, mouseY,
                     moduleLeft + 32,
                     y + 16  - fontHeight(font) / 2,
-                    moduleLeft + 32 + fontWidth(font, setting.name),
+                    moduleLeft + 32 + fontWidth(font, setting.displayName),
                     y + 16  - fontHeight(font) / 2 + fontHeight(font))) {
                 toolTip = setting.description;
             }
 
+            RenderUtil.drawCircleRect(right - 34 - fontWidth(font, setting.getDisplayValue()), y + 14 - Math.round(fontHeight(font) / 2.0F), right - 30, y + 18 + Math.round(fontHeight(font) / 2.0F), 2, 0xFF222222);
             drawString(font, setting.getDisplayValue(), right - 32 - fontWidth(font, setting.getDisplayValue()), y + 16 - fontHeight(font) / 2, -1, true);
 
             return panel.bottom = y + 32;
@@ -199,7 +226,7 @@ public class ClickGui extends GuiScreen {
 
             drawRect(left + categoriesWidth + 16, y, right - 16, y + 40, 0xFF444444);
             RenderUtil.drawCircleRect(moduleLeft + 24, y + 34, right - 24, y + 38, 2, 0xFFAAAAAA);
-            drawString(font, panel.setting.name, moduleLeft + 32, y + 12, 0xFF55FFFF, true);
+            drawString(font, panel.setting.displayName, moduleLeft + 32, y + 12, 0xFF55FFFF, true);
 
             return panel.bottom = y + 40;
         }
@@ -208,9 +235,9 @@ public class ClickGui extends GuiScreen {
     }
 
     @Override
-    public void mouseClicked(int mouseX2, int mouseY2, int mouseButton) throws IOException {
-        mouseX = mouseX2 * 2;
-        mouseY = mouseY2 * 2;
+    public void mouseClicked(int mouseX2, int mouseY2, int mouseButton) {
+        mouseX = mouseX2 * mc.gameSettings.guiScale;
+        mouseY = mouseY2 * mc.gameSettings.guiScale;
 
         // No need to check + you can probably click on invisible objects
         if (mouseY < 0 || mouseY > HEIGHT) return;
@@ -240,27 +267,37 @@ public class ClickGui extends GuiScreen {
                               modulePanel.expanded = !modulePanel.expanded;
                           }
                       } else {
-                            for (SettingPanel panel : modulePanel.settingPanels) {
-                                if (panel.setting instanceof BooleanSetting) {
-                                    BooleanSetting setting = (BooleanSetting)panel.setting;
-                                    if (mouseIntersecting(mouseX, mouseY, right - 80, panel.top + 4, right - 32, panel.top + 28)) {
-                                        setting.toggle();
-                                    }
 
-                                } else if (panel.setting instanceof NumberSetting<?>) {
-                                    if (mouseIntersecting(mouseX, mouseY, right - 32 - SLIDER_WIDTH, panel.top + 8, right - 32, panel.top + 24)) {
-                                        selectedPanel = panel;
-                                    }
+                          String bindName = modulePanel.getBindText();
+                          if (mouseIntersecting(mouseX, mouseY, right - 34 - fontWidth(font, bindName), modulePanel.bindPos + 14 - Math.round(fontHeight(font) / 2.0F), right - 30, modulePanel.bindPos + 18 + Math.round(fontHeight(font) / 2.0F))) {
+                              if (keybindListener == modulePanel) {
+                                  keybindListener = null;
+                              } else {
+                                  keybindListener = modulePanel;
+                              }
+                          }
 
-                                } else if (panel.setting instanceof EnumSetting<?>) {
-                                    EnumSetting<?> setting = (EnumSetting<?>)panel.setting;
-                                    if (mouseIntersecting(mouseX, mouseY, right - 32 - fontWidth(font, setting.getDisplayValue()), panel.top + 8, right - 32, panel.bottom + 24)) {
-                                        if (mouseButton == 0) setting.cycleForwards();
-                                        else if (mouseButton == 1) setting.cycleBackwards();
-                                    }
-                                }
+                          for (SettingPanel panel : modulePanel.settingPanels) {
+                              if (panel.setting instanceof BooleanSetting) {
+                                  BooleanSetting setting = (BooleanSetting)panel.setting;
+                                  if (mouseIntersecting(mouseX, mouseY, right - 80, panel.top + 4, right - 32, panel.top + 28)) {
+                                      setting.toggle();
+                                  }
 
-                            }
+                              } else if (panel.setting instanceof NumberSetting<?>) {
+                                  if (mouseIntersecting(mouseX, mouseY, right - 32 - SLIDER_WIDTH, panel.top + 8, right - 32, panel.top + 24)) {
+                                      selectedPanel = panel;
+                                  }
+
+                              } else if (panel.setting instanceof EnumSetting<?>) {
+                                  EnumSetting<?> setting = (EnumSetting<?>)panel.setting;
+                                  if (mouseIntersecting(mouseX, mouseY, right - 32 - fontWidth(font, setting.getDisplayValue()), panel.top + 8, right - 32, panel.bottom + 24)) {
+                                      if (mouseButton == 0) setting.cycleForwards();
+                                      else if (mouseButton == 1) setting.cycleBackwards();
+                                  }
+                              }
+
+                          }
                       }
                   }
             }
@@ -271,8 +308,8 @@ public class ClickGui extends GuiScreen {
 
     @Override
     protected void mouseClickMove(int mouseX2, int mouseY2, int clickedMouseButton, long timeSinceLastClick) {
-        int mouseX = mouseX2 * 2;
-        int mouseY = mouseY2 * 2;
+        int mouseX = mouseX2 * mc.gameSettings.guiScale;
+        int mouseY = mouseY2 * mc.gameSettings.guiScale;
 
         if (selectedPanel != null) {
             if (selectedPanel.setting instanceof IntSetting) {
@@ -301,6 +338,19 @@ public class ClickGui extends GuiScreen {
         }
     }
 
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        if (keybindListener != null) {
+            if (keyCode == Keyboard.KEY_ESCAPE) {
+                keybindListener.module.setKey(Keyboard.KEY_NONE);
+            } else {
+                keybindListener.module.setKey(keyCode);
+            }
+            keybindListener = null;
+        } else {
+            super.keyTyped(typedChar, keyCode);
+        }
+    }
 
     public static void drawString(TTFFontRenderer font, String text, int x, int y, int color, boolean shadow) {
         GlStateManager.scale(2.0F, 2.0F, 2.0F);

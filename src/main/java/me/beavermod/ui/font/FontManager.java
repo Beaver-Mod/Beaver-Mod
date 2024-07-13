@@ -25,12 +25,12 @@ public class FontManager {
 
     public static void init() {
 
-//        BIT_FONT = new FontRenderer(Beaver.INSTANCE.mc.gameSettings, new ResourceLocation("beavermod:bit.png"), Beaver.INSTANCE.mc.renderEngine, false);
-//        if (Beaver.INSTANCE.mc.gameSettings.language != null) {
-//            BIT_FONT.setUnicodeFlag(Beaver.INSTANCE.mc.isUnicode());
-//            BIT_FONT.setBidiFlag(Beaver.INSTANCE.mc.getLanguageManager().isCurrentLanguageBidirectional());
-//        }
-//        ((IReloadableResourceManager)Beaver.INSTANCE.mc.getResourceManager()).registerReloadListener(BIT_FONT);
+        BIT_FONT = new FontRenderer(Beaver.INSTANCE.mc.gameSettings, new ResourceLocation("beaver/bit.png"), Beaver.INSTANCE.mc.renderEngine, false);
+        if (Beaver.INSTANCE.mc.gameSettings.language != null) {
+            BIT_FONT.setUnicodeFlag(Beaver.INSTANCE.mc.isUnicode());
+            BIT_FONT.setBidiFlag(Beaver.INSTANCE.mc.getLanguageManager().isCurrentLanguageBidirectional());
+        }
+        ((IReloadableResourceManager)Beaver.INSTANCE.mc.getResourceManager()).registerReloadListener(BIT_FONT);
 
         for (Fonts font : Fonts.values()) {
             Beaver.LOGGER.info("Add Font: {} {}", font.name, font.size);

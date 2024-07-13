@@ -8,5 +8,12 @@
 
 package me.beavermod.module.impl.macro;
 
-public class AutoFish {
+import me.beavermod.module.Module;
+
+public class AutoFish extends Module {
+
+    public AutoFish() {
+        super("Auto Fish", "Automatic fishing", Category.MACRO);
+    }
+
 }

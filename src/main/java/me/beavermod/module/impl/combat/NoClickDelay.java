@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class NoClickDelay extends Module {
 
     public NoClickDelay() {
-        super("No Click Delay", "Removes your click delay (makes PvP more like 1.7)", Category.COMBAT);
+        super("No Click Delay", "Removes the click delay after missing a hit (1.7 attacking)", Category.COMBAT);
     }
 
     @SubscribeEvent

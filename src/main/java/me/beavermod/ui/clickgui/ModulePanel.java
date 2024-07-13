@@ -9,6 +9,8 @@
 package me.beavermod.ui.clickgui;
 
 import me.beavermod.module.Module;
+import org.luaj.vm2.ast.Str;
+import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,7 @@ public class ModulePanel {
     public final Module module;
     public boolean expanded = false;
     public int top, bottom;
+    public int bindPos;
     public final List<SettingPanel> settingPanels;
 
     public ModulePanel(Module module) {
@@ -26,6 +29,17 @@ public class ModulePanel {
                 .collect(ArrayList::new,
                         (settingPanels, setting) -> settingPanels.add(new SettingPanel(setting)),
                         List::addAll);
+    }
+
+    public String getBindText() {
+        if (ClickGui.keybindListener == this) {
+            return "Listening...";
+        }
+
+        String keyName = Keyboard.getKeyName(module.getKey());
+        if (keyName != null) return keyName;
+
+        return "NONE";
     }
 
 }

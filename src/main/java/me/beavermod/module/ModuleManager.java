@@ -28,14 +28,18 @@ public class ModuleManager extends LinkedHashMap<Module, Class<? extends Module>
     }
 
     public void addModules() {
-        new Reflections("me.beavermod.module.impl").getSubTypesOf(Module.class).forEach(module -> {
-            try {
-                Beaver.LOGGER.info("Add Module: {}", module.getSimpleName());
-                this.put(module.newInstance(), module);
-            } catch (InstantiationException | IllegalAccessException exception) {
-                throw new RuntimeException(exception);
-            }
-        });
+        new Reflections("me.beavermod.module.impl")
+                .getSubTypesOf(Module.class)
+                .stream()
+                .sorted(Comparator.comparing(Class::getSimpleName))
+                .forEach(module -> {
+                    try {
+                        Beaver.LOGGER.info("Add Module: {}", module.getSimpleName());
+                        this.put(module.newInstance(), module);
+                    } catch (InstantiationException | IllegalAccessException exception) {
+                        throw new RuntimeException(exception);
+                    }
+                });
     }
 
     @SuppressWarnings("unchecked")

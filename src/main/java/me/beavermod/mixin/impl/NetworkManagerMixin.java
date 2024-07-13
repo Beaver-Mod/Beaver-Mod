@@ -11,6 +11,8 @@ package me.beavermod.mixin.impl;
 import io.netty.channel.ChannelHandlerContext;
 import me.beavermod.event.ReceivePacketEvent;
 import me.beavermod.event.SendPacketEvent;
+import me.beavermod.module.ModuleManager;
+import me.beavermod.module.impl.other.PacketDebugger;
 import me.beavermod.util.PacketUtil;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
@@ -28,13 +30,19 @@ public class NetworkManagerMixin {
 
         if (PacketUtil.noEventList.contains(packet)) {
             PacketUtil.noEventList.remove(packet);
+            ModuleManager.INSTANCE.get(PacketDebugger.class).onSendPacket(packet, PacketDebugger.PacketState.NO_EVENT);
             return;
         }
 
         SendPacketEvent event = new SendPacketEvent(packet);
         MinecraftForge.EVENT_BUS.post(event);
 
-        if (event.isCanceled()) ci.cancel();
+        if (event.isCanceled()) {
+            ci.cancel();
+            ModuleManager.INSTANCE.get(PacketDebugger.class).onSendPacket(packet, PacketDebugger.PacketState.CANCELED);
+        } else {
+            ModuleManager.INSTANCE.get(PacketDebugger.class).onSendPacket(packet, PacketDebugger.PacketState.NORMAL);
+        }
 
     }
 

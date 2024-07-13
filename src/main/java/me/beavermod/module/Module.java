@@ -12,6 +12,7 @@ import me.beavermod.Beaver;
 import me.beavermod.module.setting.Setting;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
+import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +28,7 @@ public abstract class Module {
     public final Category category;
 
     private boolean enabled = false;
-    private int key = 0;
+    private int key = Keyboard.KEY_NONE;
 
     private final List<Setting<?>> settings = new ArrayList<>();
 
@@ -93,6 +94,7 @@ public abstract class Module {
         MACRO("Macro"),
         UTILITY("Utility"),
         VISUAL("Visual"),
+        OTHER("Other"),
         SCRIPT("Script");
 
         public final String name;

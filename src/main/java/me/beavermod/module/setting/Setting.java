@@ -18,18 +18,21 @@ public abstract class Setting<T> {
     public static final DecimalFormat DEFAULT_DECIMAL_FORMAT = new DecimalFormat("#0.##");
 
     public final String name;
+    public final String displayName;
     public final String description;
 
     protected final IChanged onChanged;
 
-    public Setting(String name, String description) {
-        this.name = name;
+    public Setting(String displayName, String description) {
+        this.name = displayName.toLowerCase().replace(' ', '-');
+        this.displayName = displayName;
         this.description = description;
         onChanged = null;
     }
 
-    public Setting(String name, String description, IChanged onChanged) {
-        this.name = name;
+    public Setting(String displayName, String description, IChanged onChanged) {
+        this.name = displayName.toLowerCase().replace(' ', '-');
+        this.displayName = displayName;
         this.description = description;
         this.onChanged = onChanged;
     }
