@@ -4,6 +4,8 @@
 
 <a href="https://discord.gg/DyPf3jzECc"><img alt="Discord" src="https://img.shields.io/discord/1260144105812393984?logo=discord"></a>
 
+**⚠️This mod is still under development!⚠️**
+
 Beaver Mod is a Minecraft utility mod for Hypixel Skyblock.<br>
 **Many features in this mod are not allowed on Hypixel, USE THIS MOD AT YOUR OWN RISK**
 
