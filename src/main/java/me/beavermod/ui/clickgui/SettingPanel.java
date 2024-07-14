@@ -15,6 +15,9 @@ public class SettingPanel {
     public final Setting<?> setting;
     public int top, bottom;
 
+    // Expanded flag used by the color pickers
+    public boolean expanded = false;
+
     public SettingPanel(Setting<?> setting) {
         this.setting = setting;
     }

@@ -1,3 +1,11 @@
+/*
+ * This file is part of Beaver Mod.
+ * Copyright (c) Beaver Mod <https://github.com/Beaver-Mod/Beaver-Mod>.
+ *
+ * Beaver Mod is free software: permission is granted to use, modify or
+ * distribute this file under the terms of the MIT license.
+ */
+
 package me.beavermod.command.impl;
 
 import me.beavermod.command.Command;
@@ -16,7 +24,7 @@ public class ToggleCmd extends Command {
     public void onCommand(String[] args, String rawCommand) {
 
         if (args.length < 2) {
-            ChatUtil.send("%sMissing arguments", EnumChatFormatting.RED);
+            ChatUtil.send("%Invalid syntax: %s", EnumChatFormatting.RED, syntax);
             return;
         }
 

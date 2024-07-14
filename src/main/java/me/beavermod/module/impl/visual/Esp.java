@@ -2,8 +2,11 @@ package me.beavermod.module.impl.visual;
 
 import me.beavermod.module.Module;
 import me.beavermod.module.setting.impl.BooleanSetting;
+import me.beavermod.module.setting.impl.ColorSetting;
 import me.beavermod.module.setting.impl.IntSetting;
 import me.beavermod.module.setting.impl.SeperatorSetting;
+
+import java.awt.*;
 
 public class Esp extends Module {
 
@@ -15,6 +18,7 @@ public class Esp extends Module {
 
     // Box
     private final BooleanSetting enableBox = new BooleanSetting("Enable Boxes", "Enables boxes", true);
+    private final ColorSetting boxColor = new ColorSetting("Box Color", "Color of the boxes", Color.WHITE);
 
     public Esp() {
         super("ESP", "extra-sensory perception", Category.VISUAL);
@@ -24,7 +28,7 @@ public class Esp extends Module {
                 showPlayers, showMobs, showItems, renderDistance,
 
                 new SeperatorSetting("Box"),
-                enableBox
+                enableBox, boxColor
         );
     }
 

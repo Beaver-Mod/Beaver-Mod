@@ -1,5 +1,12 @@
-package me.beavermod.command;
+/*
+ * This file is part of Beaver Mod.
+ * Copyright (c) Beaver Mod <https://github.com/Beaver-Mod/Beaver-Mod>.
+ *
+ * Beaver Mod is free software: permission is granted to use, modify or
+ * distribute this file under the terms of the MIT license.
+ */
 
+package me.beavermod.command;
 
 import me.beavermod.Beaver;
 import me.beavermod.event.SendPacketEvent;
@@ -10,6 +17,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.reflections.Reflections;
 
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 
 public class CommandManager extends LinkedHashMap<Command, Class<? extends Command>> {
@@ -25,14 +33,18 @@ public class CommandManager extends LinkedHashMap<Command, Class<? extends Comma
     }
 
     public void addCommands() {
-        new Reflections("me.beavermod.command.impl").getSubTypesOf(Command.class).forEach(command -> {
-            try {
-                Beaver.LOGGER.info("Add Command: {}", command.getSimpleName());
-                this.put(command.newInstance(), command);
-            } catch (InstantiationException | IllegalAccessException exception) {
-                throw new RuntimeException(exception);
-            }
-        });
+        new Reflections("me.beavermod.command.impl")
+                .getSubTypesOf(Command.class)
+                .stream()
+                .sorted(Comparator.comparing(Class::getSimpleName))
+                .forEach(command -> {
+                    try {
+                        Beaver.LOGGER.info("Add Command: {}", command.getSimpleName());
+                        this.put(command.newInstance(), command);
+                    } catch (InstantiationException | IllegalAccessException exception) {
+                        throw new RuntimeException(exception);
+                    }
+                });
     }
 
     @SubscribeEvent

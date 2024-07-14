@@ -1,3 +1,11 @@
+/*
+ * This file is part of Beaver Mod.
+ * Copyright (c) Beaver Mod <https://github.com/Beaver-Mod/Beaver-Mod>.
+ *
+ * Beaver Mod is free software: permission is granted to use, modify or
+ * distribute this file under the terms of the MIT license.
+ */
+
 package me.beavermod.command.impl;
 
 import me.beavermod.command.Command;
@@ -17,7 +25,7 @@ public class SetCmd extends Command {
     @Override
     public void onCommand(String[] args, String rawCommand) {
         if (args.length < 4) {
-            ChatUtil.send("%sMissing arguments.", EnumChatFormatting.RED);
+            ChatUtil.send("%sInvalid syntax: %s", EnumChatFormatting.RED, syntax);
             return;
         }
 
@@ -33,9 +41,13 @@ public class SetCmd extends Command {
             return;
         }
 
-        String oldValue = setting.getDisplayValue();
-        setting.parseString(args[3]);
+        try {
+            String oldValue = setting.getDisplayValue();
+            setting.parseString(args[3]);
 
-        ChatUtil.send("%s set to: %s, previously set to: %s", setting.name, setting.getDisplayValue(), oldValue);
+            ChatUtil.send("%s set to: %s, previously set to: %s", setting.name, setting.getDisplayValue(), oldValue);
+        } catch (Exception exception) {
+            ChatUtil.send("%sCouldn't parse value.", EnumChatFormatting.RED);
+        }
     }
 }

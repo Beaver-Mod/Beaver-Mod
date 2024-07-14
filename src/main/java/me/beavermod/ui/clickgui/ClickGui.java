@@ -13,17 +13,24 @@ import me.beavermod.module.setting.impl.*;
 import me.beavermod.ui.font.FontManager;
 import me.beavermod.ui.font.Fonts;
 import me.beavermod.ui.font.TTFFontRenderer;
-import me.beavermod.util.RenderUtil;
+import me.beavermod.util.render.RenderUtil;
+import me.beavermod.util.render.ShaderProgram;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static org.lwjgl.opengl.GL11.*;
 
 public class ClickGui extends GuiScreen {
 
@@ -50,10 +57,14 @@ public class ClickGui extends GuiScreen {
 
     public static String toolTip = null;
 
+    public static ShaderProgram colorPickerShader;
+
     public static void init() {
         font = FontManager.getFont(Fonts.ARIAL_18);
         headerFont = FontManager.getFont(Fonts.ARIAL_24);
         titleFont = FontManager.getFont(Fonts.ARIAL_36);
+
+        colorPickerShader = new ShaderProgram(new ResourceLocation("beaver/shader/fragment/color_interpolation.frag"));
 
         categoriesWidth = fontWidth(titleFont, EnumChatFormatting.BOLD + "Beaver") + 12;
 
@@ -99,7 +110,7 @@ public class ClickGui extends GuiScreen {
 
         GlStateManager.pushMatrix();
         GlStateManager.scale(inverseScale, inverseScale, inverseScale);
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        glEnable(GL_SCISSOR_TEST);
         RenderUtil.scissor(left / scale, top / scale + 0.5F, WIDTH / scale, HEIGHT / scale);
 
         drawRect(left, top, moduleLeft, bottom, 0xFF111111);
@@ -137,9 +148,9 @@ public class ClickGui extends GuiScreen {
                 y += 32;
 
                 for (SettingPanel panel : modulePanel.settingPanels) {
-                    y = drawSetting(panel, y);
+                    y = panel.bottom = drawSetting(panel, y);
                 }
-                RenderUtil.glColor(-1);
+                RenderUtil.color(-1);
             } else if (keybindListener == modulePanel) {
                 keybindListener = null;
             }
@@ -148,7 +159,7 @@ public class ClickGui extends GuiScreen {
             modulePanel.bottom = y - 4;
         }
 
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        glDisable(GL_SCISSOR_TEST);
 
         if (toolTip != null) {
             RenderUtil.drawCircleRect(mouseX, mouseY - fontHeight(font) - 4, mouseX + fontWidth(font, toolTip) + 4, mouseY, 2, 0x77000000);
@@ -181,7 +192,7 @@ public class ClickGui extends GuiScreen {
                 toolTip = setting.description;
             }
 
-            return panel.bottom = y + 32;
+            return y + 32;
 
         } else if (panel.setting instanceof NumberSetting<?>) {
             NumberSetting<?> setting = (NumberSetting<?>)panel.setting;
@@ -200,9 +211,10 @@ public class ClickGui extends GuiScreen {
             RenderUtil.drawCircle(right - 32 - SLIDER_WIDTH + (int)(setting.getPercent() * SLIDER_WIDTH), y + 16, 8, 0xFF55FFFF);
 
             String text = setting.getDisplayValue();
+            RenderUtil.drawCircleRect(right - 50 - SLIDER_WIDTH - fontWidth(font, text), y + 14 - fontHeight(font) / 2.0F, right - 46 - SLIDER_WIDTH, y + 18 + fontHeight(font) / 2.0F, 4,  0xFF222222);
             drawString(font, text, right - 48 - SLIDER_WIDTH - fontWidth(font, text), y + 16 - fontHeight(font) / 2, -1, true);
 
-            return panel.bottom = y + 32;
+            return y + 32;
 
         } else if (panel.setting instanceof EnumSetting<?>) {
             EnumSetting<?> setting = (EnumSetting<?>)panel.setting;
@@ -220,7 +232,32 @@ public class ClickGui extends GuiScreen {
             RenderUtil.drawCircleRect(right - 34 - fontWidth(font, setting.getDisplayValue()), y + 14 - Math.round(fontHeight(font) / 2.0F), right - 30, y + 18 + Math.round(fontHeight(font) / 2.0F), 2, 0xFF222222);
             drawString(font, setting.getDisplayValue(), right - 32 - fontWidth(font, setting.getDisplayValue()), y + 16 - fontHeight(font) / 2, -1, true);
 
-            return panel.bottom = y + 32;
+            return y + 32;
+
+        } else if (panel.setting instanceof ColorSetting) {
+            ColorSetting setting = (ColorSetting)panel.setting;
+
+            drawRect(left + categoriesWidth + 16, y, right - 16, y + 32, 0xFF444444);
+            drawString(font, setting.displayName, moduleLeft + 32, y + 16 - fontHeight(font) / 2, -1, true);
+            if (mouseIntersecting(mouseX, mouseY,
+                    moduleLeft + 32,
+                    y + 16  - fontHeight(font) / 2,
+                    moduleLeft + 32 + fontWidth(font, setting.displayName),
+                    y + 16  - fontHeight(font) / 2 + fontHeight(font))) {
+                toolTip = setting.description;
+            }
+
+            RenderUtil.drawCircleRect(right - 48, y + 8, right - 32, y + 24, 4, setting.getRgb());
+            y += 32;
+
+            if (panel.expanded) {
+
+                // Draw shit here (it doesn't work...)
+
+                y += 112;
+            }
+
+            return y;
 
         } else if (panel.setting instanceof SeperatorSetting) {
 
@@ -228,10 +265,10 @@ public class ClickGui extends GuiScreen {
             RenderUtil.drawCircleRect(moduleLeft + 24, y + 34, right - 24, y + 38, 2, 0xFFAAAAAA);
             drawString(font, panel.setting.displayName, moduleLeft + 32, y + 12, 0xFF55FFFF, true);
 
-            return panel.bottom = y + 40;
+            return y + 40;
         }
 
-        return panel.bottom = y;
+        return y;
     }
 
     @Override
@@ -294,6 +331,11 @@ public class ClickGui extends GuiScreen {
                                   if (mouseIntersecting(mouseX, mouseY, right - 32 - fontWidth(font, setting.getDisplayValue()), panel.top + 8, right - 32, panel.bottom + 24)) {
                                       if (mouseButton == 0) setting.cycleForwards();
                                       else if (mouseButton == 1) setting.cycleBackwards();
+                                  }
+
+                              } else if (panel.setting instanceof ColorSetting) {
+                                  if (mouseIntersecting(mouseX, mouseY, right - 48, panel.top + 8, right - 32, panel.top + 24)) {
+                                      panel.expanded = !panel.expanded;
                                   }
                               }
 
@@ -360,7 +402,7 @@ public class ClickGui extends GuiScreen {
             font.drawString(text, (float)(x / 2), (float)(y / 2), color);
         }
         GlStateManager.scale(0.5F, 0.5F, 0.5F);
-        RenderUtil.glColor(-1);
+        RenderUtil.color(-1);
     }
 
     public static int fontWidth(TTFFontRenderer font, String str) {

@@ -1,4 +1,6 @@
 /*
+ * This file was origionally created by Jinthium <https://github.com/Jinthium>
+ *
  * This file is part of Beaver Mod.
  * Copyright (c) Beaver Mod <https://github.com/Beaver-Mod/Beaver-Mod>.
  *
@@ -6,9 +8,9 @@
  * distribute this file under the terms of the MIT license.
  */
 
-package me.beavermod.event;
+#version 120
 
-import net.minecraftforge.fml.common.eventhandler.Event;
-
-public class PreTickEvent extends Event {
+void main() {
+    gl_TexCoord[0] = gl_MultiTexCoord0;
+    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 }
