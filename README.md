@@ -4,6 +4,8 @@
 
 <a href="https://discord.gg/DyPf3jzECc"><img alt="Discord" src="https://img.shields.io/discord/1260144105812393984?logo=discord"></a>
 
+**⚠️This mod is still under development!⚠️**
+
 Beaver Mod is a Minecraft utility mod for Hypixel Skyblock.<br>
 **Many features in this mod are not allowed on Hypixel, USE THIS MOD AT YOUR OWN RISK**
 
@@ -17,8 +19,10 @@ Beaver Mod is a Minecraft utility mod for Hypixel Skyblock.<br>
 
 ### Installation
 1. Install [Minecraft Forge](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.8.9.html) for 1.8.9.
-2. Download the mod from [Releases](https://github.com/Beaver-Mod/Beaver-Mod/releases).
+2. Build the client as shown in the build section.
 3. Put the mod in your mods folder.
+
+[comment]: <> (2. Download the mod from [Releases]&#40;https://github.com/Beaver-Mod/Beaver-Mod/releases&#41;.)
 
 ## Contributing
 Contributions are appreciated, if you want to help improve the client submit a pull request.
