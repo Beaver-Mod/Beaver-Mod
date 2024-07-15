@@ -13,6 +13,8 @@ import me.beavermod.command.CommandManager;
 import me.beavermod.module.ModuleManager;
 import me.beavermod.ui.clickgui.ClickGui;
 import me.beavermod.ui.font.FontManager;
+import me.beavermod.ui.hud.Hud;
+import me.beavermod.ui.notification.NotificationManager;
 import me.beavermod.util.Reflection;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.Mod;
@@ -23,7 +25,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-@Mod(modid = Beaver.MOD_ID, name = Beaver.NAME, version = Beaver.VERSION, acceptedMinecraftVersions = Beaver.ACCEPTED_VERSIONS, clientSideOnly = true)
+@Mod(modid = Beaver.MOD_ID,
+        name = Beaver.NAME,
+        version = Beaver.VERSION,
+        acceptedMinecraftVersions = Beaver.ACCEPTED_VERSIONS,
+        clientSideOnly = true)
 public class Beaver {
 
     public static final Logger LOGGER = LogManager.getLogger("Beaver");
@@ -54,6 +60,8 @@ public class Beaver {
         ModuleManager.init();
         CommandManager.init();
         ClickGui.init();
+        Hud.init();
+
     }
 
 

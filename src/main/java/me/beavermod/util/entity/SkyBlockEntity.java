@@ -9,6 +9,7 @@
 package me.beavermod.util.entity;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityArmorStand;
 
 public class SkyBlockEntity {
 
@@ -16,12 +17,12 @@ public class SkyBlockEntity {
     public final Entity entity;
 
     // the entity ID of the armor stand with the name tag
-    public final Entity nameTag;
+    public final EntityArmorStand nameTag;
 
     // The type of entity, either a Player a Mob or an NPC
     public final Type type;
 
-    public SkyBlockEntity(Entity entity, Entity nameTag, Type type) {
+    public SkyBlockEntity(Entity entity, EntityArmorStand nameTag, Type type) {
         this.entity = entity;
         this.nameTag = nameTag;
         this.type = type;

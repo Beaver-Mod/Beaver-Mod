@@ -44,7 +44,7 @@ public class KillAura extends Module {
     private final FloatSetting range = new FloatSetting("Range", "Range to attack entities, attack packets won't be sent over 3 blocks", 0, 6, 3.5F);
     private final BooleanSetting noSwing = new BooleanSetting("No Swing", "Won't swing your arm when attacking (client side only)", false);
 
-    private final BooleanSetting autoDisable = new BooleanSetting("Auto Disable", "Disables Kill Aura when dying or joining a new lobby", true);
+    private final BooleanSetting autoDisable = new BooleanSetting("Auto Disable", "Disables Kill Aura when dying, joining a new lobby or teleporting", true);
 
     private Entity target = null;
 
@@ -74,7 +74,8 @@ public class KillAura extends Module {
     public enum TargetMode {
         SINGLE,
         SWITCH,
-        PRIORITY
+        PRIORITY,
+        FLOOR
     }
 
     public enum TargetSorting {

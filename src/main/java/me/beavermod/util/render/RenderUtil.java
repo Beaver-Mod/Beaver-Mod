@@ -259,5 +259,13 @@ public class RenderUtil {
 
     }
 
+    public static Color darkenColor(Color color, int amount) {
+        for (int i = 0; i < amount; i++) {
+            color = color.darker();
+        }
+
+        return color;
+    }
+
 
 }
