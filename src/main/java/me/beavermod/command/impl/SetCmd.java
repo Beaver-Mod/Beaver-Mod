@@ -45,7 +45,7 @@ public class SetCmd extends Command {
             String oldValue = setting.getDisplayValue();
             setting.parseString(args[3]);
 
-            ChatUtil.send("%s set to: %s, previously set to: %s", setting.name, setting.getDisplayValue(), oldValue);
+            ChatUtil.send("%s set to: %s, previously set to: %s", setting.displayName, setting.getDisplayValue(), oldValue);
         } catch (Exception exception) {
             ChatUtil.send("%sCouldn't parse value.", EnumChatFormatting.RED);
         }

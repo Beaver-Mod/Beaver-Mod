@@ -99,7 +99,7 @@ public class ClickGui extends GuiScreen {
             keybindListener = null;
         }
 
-        categoryPanel.offset += Mouse.getDWheel() / 5;
+        categoryPanel.offset -= Mouse.getDWheel() / 5;
         if (categoryPanel.offset <= 0) {
             categoryPanel.offset = 0;
         }

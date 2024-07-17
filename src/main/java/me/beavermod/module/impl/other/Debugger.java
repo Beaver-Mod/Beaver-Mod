@@ -11,6 +11,8 @@ import me.beavermod.module.setting.util.IChanged;
 import me.beavermod.util.minecraft.ChatUtil;
 import me.beavermod.util.minecraft.entity.EntityUtil;
 import net.minecraft.event.ClickEvent;
+import net.minecraft.network.EnumConnectionState;
+import net.minecraft.network.EnumPacketDirection;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.*;
 import net.minecraft.util.EnumChatFormatting;
@@ -18,23 +20,14 @@ import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Queue;
 
 public class Debugger extends Module {
 
-    private final BooleanSetting c00 = new BooleanSetting("C00", "C00 Packets", false);
-    private final BooleanSetting c01 = new BooleanSetting("C01", "C01 Packets", false);
-    private final BooleanSetting c02 = new BooleanSetting("C02", "C02 Packets", false);
-    private final BooleanSetting c03 = new BooleanSetting("C03", "C03-C06 Packets", false);
-    private final BooleanSetting c07 = new BooleanSetting("C07", "C07 Packets", false);
-    private final BooleanSetting c08 = new BooleanSetting("C08", "C08 Packets", false);
-    private final BooleanSetting c09 = new BooleanSetting("C09", "C09 Packets", false);
-    private final BooleanSetting c0a = new BooleanSetting("C0A", "C0A Packets", false);
-    private final BooleanSetting c0b = new BooleanSetting("C0B", "C0B Packets", false);
-    private final BooleanSetting c0c = new BooleanSetting("C0C", "C0C Packets", false);
-    private final BooleanSetting c0d = new BooleanSetting("C0D", "C0D Packets", false);
-    private final BooleanSetting c0e = new BooleanSetting("C0E", "C0E Packets", false);
-    private final BooleanSetting c0f = new BooleanSetting("C0F", "C0F Packets", false);
+    private final Map<Class<? extends Packet>, BooleanSetting> clientPacketSettings = new HashMap<>();
+    private final Map<Class<? extends Packet>, BooleanSetting> serverPacketSettings = new HashMap<>();
 
     private final IntSetting cacheSize = new IntSetting("Cache Size", "Packet cache size (changing will clear the cache)", 10, 1000, 100, "%d", new IChanged() {
         @Override
@@ -49,10 +42,43 @@ public class Debugger extends Module {
 
     public Debugger() {
         super("Debugger", "Helps with debugging", Category.OTHER);
-        addSettings(
-                new SeperatorSetting("Packets"),
-                c00, c01, c02, c03, c07, c08, c09, c0a, c0b, c0c, c0d, c0e, c0f,
 
+        addSettings(new SeperatorSetting("Client Packets"));
+        for (int i = 0; ; i++) {
+            try {
+               Packet packet = EnumConnectionState.PLAY.getPacket(EnumPacketDirection.SERVERBOUND, i);
+               if (packet == null) {
+                   break;
+               }
+
+               Class<? extends Packet> packetClass = packet.getClass();
+                String settingName = packetClass.getSimpleName().startsWith("C") ? packetClass.getSimpleName() : String.format("C%02X", i);
+                BooleanSetting setting = new BooleanSetting(settingName, packetClass.getSimpleName(), false);
+               clientPacketSettings.put(packetClass, setting);
+               addSettings(setting);
+
+            } catch (IllegalAccessException | InstantiationException ignored) {}
+        }
+
+        addSettings(new SeperatorSetting("Server Packets"));
+        for (int i = 0; ; i++) {
+            try {
+                Packet packet = EnumConnectionState.PLAY.getPacket(EnumPacketDirection.CLIENTBOUND, i);
+                if (packet == null) {
+                    break;
+                }
+
+                Class<? extends Packet> packetClass = packet.getClass();
+                String settingName = packetClass.getSimpleName().startsWith("S") ? packetClass.getSimpleName() : String.format("S%02X", i);
+                BooleanSetting setting = new BooleanSetting(settingName, packetClass.getSimpleName(), false);
+                serverPacketSettings.put(packetClass, setting);
+                addSettings(setting);
+
+            } catch (IllegalAccessException | InstantiationException ignored) {}
+        }
+
+
+        addSettings(
                 new SeperatorSetting("Entities"),
                 entityDebugger
         );
@@ -78,34 +104,21 @@ public class Debugger extends Module {
     public void onSendPacketCustom(Packet packet, PacketState state) {
         if (!this.isEnabled()) return;
 
-        // TODO: find a better way to do this...
-        if (packet instanceof C00PacketKeepAlive && c00.get()) {
-            printPacket(packet, state);
-        } if (packet instanceof C02PacketUseEntity && c02.get()) {
-            printPacket(packet, state);
-        } else if (packet instanceof C03PacketPlayer && c03.get()) {
-            printPacket(packet, state);
-        } else if (packet instanceof C07PacketPlayerDigging && c07.get()) {
-            printPacket(packet, state);
-        } else if (packet instanceof C08PacketPlayerBlockPlacement && c08.get()) {
-            printPacket(packet, state);
-        } else if (packet instanceof C09PacketHeldItemChange && c09.get()) {
-            printPacket(packet, state);
-        } else if (packet instanceof C0APacketAnimation && c0a.get()) {
-            printPacket(packet, state);
-        } else if (packet instanceof C0BPacketEntityAction && c0b.get()) {
-            printPacket(packet, state);
-        } else if (packet instanceof C0CPacketInput && c0c.get()) {
-            printPacket(packet, state);
-        } else if (packet instanceof C0DPacketCloseWindow && c0d.get()) {
-            printPacket(packet, state);
-        } else if (packet instanceof C0EPacketClickWindow && c0e.get()) {
-            printPacket(packet, state);
-        } else if (packet instanceof C0FPacketConfirmTransaction && c0f.get()) {
+        if (clientPacketSettings.get(packet.getClass()).get()) {
             printPacket(packet, state);
         }
 
     }
+
+    public void onReceivePacketCustom(Packet packet, PacketState state) {
+        if (!this.isEnabled()) return;
+
+        if (serverPacketSettings.get(packet.getClass()).get()) {
+            printPacket(packet, state);
+        }
+
+    }
+
 
     public void printPacket(Packet packet, PacketState state) {
 
@@ -153,6 +166,10 @@ public class Debugger extends Module {
 
         if (packet instanceof C0BPacketEntityAction) {
             return ((C0BPacketEntityAction)packet).getAction().name();
+        }
+
+        if (packet instanceof C0EPacketClickWindow) {
+            return Integer.toString(((C0EPacketClickWindow) packet).getSlotId());
         }
 
         return null;

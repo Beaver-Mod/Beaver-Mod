@@ -52,7 +52,12 @@ public class NetworkManagerMixin {
         ReceivePacketEvent event = new ReceivePacketEvent(packet);
         MinecraftForge.EVENT_BUS.post(event);
 
-        if (event.isCanceled()) ci.cancel();
+        if (event.isCanceled()) {
+            ci.cancel();
+            ModuleManager.INSTANCE.get(Debugger.class).onReceivePacketCustom(packet, Debugger.PacketState.CANCELED);
+        } else {
+            ModuleManager.INSTANCE.get(Debugger.class).onReceivePacketCustom(packet, Debugger.PacketState.NORMAL);
+        }
 
     }
 
