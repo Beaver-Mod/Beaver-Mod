@@ -6,17 +6,28 @@
  * distribute this file under the terms of the MIT license.
  */
 
-package me.beavermod.util.render;
+package me.beavermod.util.minecraft.render;
 
 import me.beavermod.Beaver;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.Entity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.glu.GLU;
 
 import javax.vecmath.Vector3d;
 import java.awt.*;
+import java.lang.reflect.Method;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -24,11 +35,15 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class RenderUtil {
 
+    private static final Minecraft mc = Beaver.INSTANCE.mc;
+
     // Convert 2D buffers
-    private static FloatBuffer screenCoords = BufferUtils.createFloatBuffer(3);
-    private static IntBuffer viewport = BufferUtils.createIntBuffer(16);
-    private static FloatBuffer modelView = BufferUtils.createFloatBuffer(16);
-    private static FloatBuffer projection = BufferUtils.createFloatBuffer(16);
+    private static final FloatBuffer screenCoords = BufferUtils.createFloatBuffer(3);
+    private static final IntBuffer viewport = BufferUtils.createIntBuffer(16);
+    private static final FloatBuffer modelView = BufferUtils.createFloatBuffer(16);
+    private static final FloatBuffer projection = BufferUtils.createFloatBuffer(16);
+
+    private static final Frustum frustum = new Frustum();
 
     public static void start() {
         glEnable(GL_BLEND);
@@ -58,6 +73,42 @@ public class RenderUtil {
         glDisable(GL_POINT_SMOOTH);
         glDisable(GL_LINE_SMOOTH);
         glDisable(GL_POLYGON_SMOOTH);
+    }
+
+    public static void drawRect(double left, double top, double right, double bottom, int color)
+    {
+        if (left < right)
+        {
+            double i = left;
+            left = right;
+            right = i;
+        }
+
+        if (top < bottom)
+        {
+            double j = top;
+            top = bottom;
+            bottom = j;
+        }
+
+        float a = (float)(color >> 24 & 255) / 255.0F;
+        float r = (float)(color >> 16 & 255) / 255.0F;
+        float g = (float)(color >> 8 & 255) / 255.0F;
+        float b = (float)(color & 255) / 255.0F;
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+        GlStateManager.color(r, g, b, a);
+        worldrenderer.begin(GL_QUADS, DefaultVertexFormats.POSITION);
+        worldrenderer.pos(left, bottom, 0.0).endVertex();
+        worldrenderer.pos(right, bottom, 0.0).endVertex();
+        worldrenderer.pos(right, top, 0.0).endVertex();
+        worldrenderer.pos(left, top, 0.0).endVertex();
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
     }
 
     public static void drawCircle(float x, float y, float radius, int color) {
@@ -244,6 +295,20 @@ public class RenderUtil {
         height *= scale;
 
         glScissor((int) x, (int) (y - height), (int) width, (int) height);
+    }
+
+    public static boolean isInViewFrustum(Entity entity) {
+        return isInViewFrustum(entity.getEntityBoundingBox()) || entity.ignoreFrustumCheck;
+    }
+
+    public static boolean isInViewFrustum(TileEntity tile) {
+        return isInViewFrustum(tile.getBlockType().getSelectedBoundingBox(mc.theWorld, tile.getPos()));
+    }
+
+    private static boolean isInViewFrustum(AxisAlignedBB bb) {
+        Entity current = mc.getRenderViewEntity();
+        frustum.setPosition(current.posX, current.posY, current.posZ);
+        return frustum.isBoundingBoxInFrustum(bb);
     }
 
     public static Vector3d to2D(int scaleFactor, double x, double y, double z) {

@@ -9,8 +9,7 @@
 package me.beavermod.script;
 
 import me.beavermod.script.api.PlayerScriptApi;
-import me.beavermod.util.ChatUtil;
-import net.minecraft.util.EnumChatFormatting;
+import me.beavermod.util.minecraft.ChatUtil;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.lib.jse.JsePlatform;
@@ -29,9 +28,9 @@ public class ScriptManager {
         try {
             globals.loadfile(scriptFile.getAbsolutePath()).call();
         } catch (LuaError error) {
-            ChatUtil.print("%sLua Error: %s", EnumChatFormatting.RED, error.getMessage());
+            ChatUtil.error("%sLua Error: %s", error.getMessage());
         } catch (Exception exception) {
-            ChatUtil.print("%sJVM Error: %s", EnumChatFormatting.RED, exception.getMessage());
+            ChatUtil.error("%sJVM Error: %s", exception.getMessage());
         }
     }
 

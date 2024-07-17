@@ -9,10 +9,10 @@
 package me.beavermod.ui.hud;
 
 import me.beavermod.Beaver;
-import me.beavermod.event.Render2DEvent;
 import me.beavermod.module.ModuleManager;
 import me.beavermod.module.impl.visual.HudMod;
 import me.beavermod.ui.notification.NotificationManager;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class Hud {
 
@@ -20,7 +20,7 @@ public class Hud {
 
     }
 
-    public static void draw(Render2DEvent event) {
+    public static void draw(TickEvent.RenderTickEvent event) {
         if (module().enableNotifications.get() && Beaver.INSTANCE.mc.currentScreen == null) {
             NotificationManager.draw();
         }

@@ -8,7 +8,6 @@
 
 package me.beavermod.module.impl.visual;
 
-import me.beavermod.event.Render2DEvent;
 import me.beavermod.module.Module;
 import me.beavermod.module.setting.impl.BooleanSetting;
 import me.beavermod.module.setting.impl.EnumSetting;
@@ -16,6 +15,7 @@ import me.beavermod.module.setting.impl.SeperatorSetting;
 import me.beavermod.ui.hud.Hud;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class HudMod extends Module {
 
@@ -28,10 +28,12 @@ public class HudMod extends Module {
                 new SeperatorSetting("Notifications"),
                 enableNotifications, notificationSound
         );
+
+        toggle(true);
     }
 
     @SubscribeEvent
-    public void onRender2D(Render2DEvent event) {
+    public void onRender(TickEvent.RenderTickEvent event) {
         Hud.draw(event);
     }
 

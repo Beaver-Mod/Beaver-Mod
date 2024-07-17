@@ -12,8 +12,8 @@ import me.beavermod.Beaver;
 import me.beavermod.ui.font.FontManager;
 import me.beavermod.ui.font.Fonts;
 import me.beavermod.ui.font.TTFFontRenderer;
-import me.beavermod.util.Clock;
-import me.beavermod.util.render.RenderUtil;
+import me.beavermod.util.misc.Clock;
+import me.beavermod.util.minecraft.render.RenderUtil;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
@@ -44,7 +44,7 @@ public class Notification {
         this.fadeTime = 200;
         this.height = 24;
 
-        this.title = String.format("%s%s%ss %s-%%time%%", EnumChatFormatting.BOLD, title, EnumChatFormatting.RESET, EnumChatFormatting.GRAY);
+        this.title = String.format("%s%s%s %s- %%time%%", EnumChatFormatting.BOLD, title, EnumChatFormatting.RESET, EnumChatFormatting.GRAY);
         this.message = message;
         this.type = type;
         this.time = time;

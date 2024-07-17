@@ -10,7 +10,7 @@ package me.beavermod.command.impl;
 
 import me.beavermod.command.Command;
 import me.beavermod.command.CommandManager;
-import me.beavermod.util.ChatUtil;
+import me.beavermod.util.minecraft.ChatUtil;
 
 public class HelpCmd extends Command {
 

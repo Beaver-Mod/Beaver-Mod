@@ -18,8 +18,8 @@ public class GuiIngameMixin extends Gui {
 
     @Shadow @Final protected Minecraft mc;
 
-    @Inject(method = "renderGameOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;enableBlend()V", ordinal = 4))
-    public void render2DEvent(float partialTicks, CallbackInfo ci) {
+    @Inject(method = "renderTooltip", at = @At("RETURN"))
+    private void renderTooltipPost(ScaledResolution sr, float partialTicks, CallbackInfo ci) {
         MinecraftForge.EVENT_BUS.post(new Render2DEvent(partialTicks));
     }
 

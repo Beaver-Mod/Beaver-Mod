@@ -9,18 +9,24 @@
 package me.beavermod.mixin.impl;
 
 import com.mojang.authlib.GameProfile;
+import me.beavermod.event.JoinEvent;
 import me.beavermod.event.PreMotionEvent;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.network.play.client.C0BPacketEntityAction;
+import net.minecraft.stats.StatFileWriter;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @SuppressWarnings("OverwriteAuthorRequired") // annoying
 @Mixin(EntityPlayerSP.class)
@@ -48,6 +54,11 @@ public abstract class EntityPlayerSPMixin extends AbstractClientPlayer {
 
     public EntityPlayerSPMixin(World worldIn, GameProfile playerProfile) {
         super(worldIn, playerProfile);
+    }
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    public void onJoin(Minecraft mcIn, World worldIn, NetHandlerPlayClient netHandler, StatFileWriter statFile, CallbackInfo ci) {
+        MinecraftForge.EVENT_BUS.post(new JoinEvent());
     }
 
     @Overwrite

@@ -28,7 +28,7 @@ public class NotificationManager {
     }
 
     public static void addNotification(Notification notification) {
-        if (!ModuleManager.INSTANCE.get(HudMod.class).enableNotifications.get()) return;
+        if (!ModuleManager.INSTANCE.isEnabled(HudMod.class) || !ModuleManager.INSTANCE.get(HudMod.class).enableNotifications.get()) return;
         notifications.add(0, notification);
         try {
 

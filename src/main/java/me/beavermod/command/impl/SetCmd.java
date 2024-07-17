@@ -12,7 +12,7 @@ import me.beavermod.command.Command;
 import me.beavermod.module.Module;
 import me.beavermod.module.ModuleManager;
 import me.beavermod.module.setting.Setting;
-import me.beavermod.util.ChatUtil;
+import me.beavermod.util.minecraft.ChatUtil;
 import net.minecraft.util.EnumChatFormatting;
 
 public class SetCmd extends Command {

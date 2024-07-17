@@ -6,7 +6,7 @@
  * distribute this file under the terms of the MIT license.
  */
 
-package me.beavermod.util;
+package me.beavermod.util.minecraft;
 
 import me.beavermod.Beaver;
 import net.minecraft.network.Packet;

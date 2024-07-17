@@ -8,7 +8,7 @@
  * distribute this file under the terms of the MIT license.
  */
 
-package me.beavermod.util.render;
+package me.beavermod.util.minecraft.render;
 
 import me.beavermod.Beaver;
 import net.minecraft.util.ResourceLocation;

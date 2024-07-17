@@ -9,7 +9,7 @@
 package me.beavermod.module;
 
 import me.beavermod.Beaver;
-import me.beavermod.util.ChatUtil;
+import me.beavermod.util.minecraft.ChatUtil;
 import org.reflections.Reflections;
 
 import java.util.Comparator;
@@ -60,11 +60,15 @@ public class ModuleManager extends LinkedHashMap<Module, Class<? extends Module>
     }
 
     public boolean isEnabled(Class<? extends Module> clazz) {
-        return Objects.requireNonNull(keySet().stream()
-                .filter(module -> module.getClass() == clazz)
-                .findFirst()
-                .orElse(null)
-        ).isEnabled();
+        try {
+            return keySet().stream()
+                    .filter(module -> module.getClass() == clazz)
+                    .findFirst()
+                    .orElse(null)
+                    .isEnabled();
+        } catch (NullPointerException ignored) {}
+
+        return false;
     }
 
     public List<Module> search(String name) {

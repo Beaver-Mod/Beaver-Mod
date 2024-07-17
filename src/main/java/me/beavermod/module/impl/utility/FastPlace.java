@@ -12,7 +12,7 @@ import me.beavermod.event.PreTickEvent;
 import me.beavermod.module.Module;
 import me.beavermod.module.setting.impl.BooleanSetting;
 import me.beavermod.module.setting.impl.IntSetting;
-import me.beavermod.util.Reflection;
+import me.beavermod.util.misc.Reflection;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 

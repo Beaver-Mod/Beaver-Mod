@@ -10,7 +10,7 @@ package me.beavermod.module.impl.combat;
 
 import me.beavermod.event.PreTickEvent;
 import me.beavermod.module.Module;
-import me.beavermod.util.Reflection;
+import me.beavermod.util.misc.Reflection;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class NoClickDelay extends Module {

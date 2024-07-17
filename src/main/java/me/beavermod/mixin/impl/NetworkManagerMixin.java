@@ -12,8 +12,8 @@ import io.netty.channel.ChannelHandlerContext;
 import me.beavermod.event.ReceivePacketEvent;
 import me.beavermod.event.SendPacketEvent;
 import me.beavermod.module.ModuleManager;
-import me.beavermod.module.impl.other.PacketDebugger;
-import me.beavermod.util.PacketUtil;
+import me.beavermod.module.impl.other.Debugger;
+import me.beavermod.util.minecraft.PacketUtil;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraftforge.common.MinecraftForge;
@@ -30,7 +30,7 @@ public class NetworkManagerMixin {
 
         if (PacketUtil.noEventList.contains(packet)) {
             PacketUtil.noEventList.remove(packet);
-            ModuleManager.INSTANCE.get(PacketDebugger.class).onSendPacket(packet, PacketDebugger.PacketState.NO_EVENT);
+            ModuleManager.INSTANCE.get(Debugger.class).onSendPacketCustom(packet, Debugger.PacketState.NO_EVENT);
             return;
         }
 
@@ -39,9 +39,9 @@ public class NetworkManagerMixin {
 
         if (event.isCanceled()) {
             ci.cancel();
-            ModuleManager.INSTANCE.get(PacketDebugger.class).onSendPacket(packet, PacketDebugger.PacketState.CANCELED);
+            ModuleManager.INSTANCE.get(Debugger.class).onSendPacketCustom(packet, Debugger.PacketState.CANCELED);
         } else {
-            ModuleManager.INSTANCE.get(PacketDebugger.class).onSendPacket(packet, PacketDebugger.PacketState.NORMAL);
+            ModuleManager.INSTANCE.get(Debugger.class).onSendPacketCustom(packet, Debugger.PacketState.NORMAL);
         }
 
     }

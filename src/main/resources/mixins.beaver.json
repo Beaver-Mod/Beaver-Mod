@@ -4,10 +4,12 @@
   "refmap": "mixins.beaver.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "ArmorStandRendererMixin",
     "EntityPlayerSPMixin",
     "EntityRendererMixin",
     "GuiIngameMixin",
     "MinecraftMixin",
-    "NetworkManagerMixin"
+    "NetworkManagerMixin",
+    "RendererLivingEntityMixin"
   ]
 }

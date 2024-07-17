@@ -10,7 +10,7 @@ package me.beavermod.command;
 
 import me.beavermod.Beaver;
 import me.beavermod.event.SendPacketEvent;
-import me.beavermod.util.ChatUtil;
+import me.beavermod.util.minecraft.ChatUtil;
 import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.MinecraftForge;
