@@ -1,9 +1,19 @@
 /*
- * This file is part of Beaver Mod.
- * Copyright (c) Beaver Mod <https://github.com/Beaver-Mod/Beaver-Mod>.
+ * This file is apart of Beaver Mod <https://github.com/Beaver-Mod/Beaver-Mod>
+ * Copyright (C) 2024  Beaver Fan Club
  *
- * Beaver Mod is free software: permission is granted to use, modify or
- * distribute this file under the terms of the MIT license.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package me.beavermod.script;

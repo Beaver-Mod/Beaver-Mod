@@ -1,11 +1,19 @@
 /*
- * This file is modified from Raven bS <https://github.com/Strangerrrs/Raven-bS>
+ * This file is apart of Beaver Mod <https://github.com/Beaver-Mod/Beaver-Mod>
+ * Copyright (C) 2024  Beaver Fan Club
  *
- * This file is part of Beaver Mod.
- * Copyright (c) Beaver Mod <https://github.com/Beaver-Mod/Beaver-Mod>.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Beaver Mod is free software: permission is granted to use, modify or
- * distribute this file under the terms of the MIT license.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package me.beavermod.util.misc;
@@ -20,9 +28,8 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-public class Reflection {
-
-    // This class can be used to access private fields and methods
+// TODO: create a refmap <https://github.com/KevyPorter/Minecraft-Forge-Utils>
+public class AccessWidenerReflect {
 
     public static Field leftClickCounter;
     public static Field rightClickDelayTimer;

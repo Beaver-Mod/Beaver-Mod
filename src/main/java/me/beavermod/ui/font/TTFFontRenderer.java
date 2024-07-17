@@ -1,3 +1,21 @@
+/*
+ * This file is apart of Beaver Mod <https://github.com/Beaver-Mod/Beaver-Mod>
+ * Copyright (C) 2024  Beaver Fan Club
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package me.beavermod.ui.font;
 
 import java.awt.Color;
@@ -23,8 +41,9 @@ import net.minecraft.util.MathHelper;
  * Just a little fontrenderer for minecraft I wrote. Should work with any font size
  * without any graphical glitches, but because of this setup takes forever. Feel free to make any edits.
  * <p>
- * Created by Zeb on December 19th 2016.<br>
- * Refactored by CalculusHvH on July 15th 2024.
+ * Created by Zeb on December 19th 2016.
+ *
+ * Updated by CalculusHvH (Beaver Fan Club) on July 15th 2024.
  */
 public class TTFFontRenderer {
 

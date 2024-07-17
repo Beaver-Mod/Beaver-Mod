@@ -1,8 +1,25 @@
+/*
+ * This file is apart of Beaver Mod <https://github.com/Beaver-Mod/Beaver-Mod>
+ * Copyright (C) 2024  Beaver Fan Club
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package me.beavermod.module.impl.macro;
 
 import me.beavermod.event.ReceivePacketEvent;
 import me.beavermod.module.Module;
-import me.beavermod.module.setting.impl.BooleanSetting;
 import me.beavermod.module.setting.impl.IntSetting;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.ContainerChest;
@@ -16,15 +33,14 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class AutoHarp extends Module {
 
-    private final IntSetting tickDelay = new IntSetting("Tick Delay", "Delay in ticks between playing a note (may need to be adjusted between songs)", 0, 10, 2);
-    private final BooleanSetting prevHit = new BooleanSetting("Early Note", "Hits the note early, may help on higher ping", false);
+    private final IntSetting tickDelay = new IntSetting("Tick Delay", "Delay in ticks between playing a note (may need to be adjusted between songs)", 0, 5, 2);
 
     private boolean differentState = true;
     private int ticks = 0;
 
     public AutoHarp() {
-        super("Auto Harp", "Plays melodies harp for you", Category.MACRO);
-        addSettings(tickDelay, prevHit);
+        super("Auto Harp", "Plays melodies harp for you (won't work as well on high ping)", Category.MACRO);
+        addSettings(tickDelay);
     }
 
     @Override
@@ -43,21 +59,11 @@ public class AutoHarp extends Module {
                 IInventory inventory = ((ContainerChest) mc.thePlayer.openContainer).getLowerChestInventory();
 
                 if (differentState && ticks <= 0) {
-                    if (prevHit.get()) {
-                        for (int slot = 28; slot <= 34; ++slot) {
-                            ItemStack itemStack = inventory.getStackInSlot(slot);
-                            if (itemStack != null && Item.getIdFromItem(itemStack.getItem()) == 35) {
-                                playNote(itemStack, slot);
-                                break;
-                            }
-                        }
-                    } else {
-                        for (int slot = 37; slot <= 43; ++slot) {
-                            ItemStack itemStack = inventory.getStackInSlot(slot);
-                            if (itemStack != null && Item.getIdFromItem(itemStack.getItem()) == 155) {
-                                playNote(itemStack, slot);
-                                break;
-                            }
+                    for (int slot = 37; slot <= 43; ++slot) {
+                        ItemStack itemStack = inventory.getStackInSlot(slot);
+                        if (itemStack != null && Item.getIdFromItem(itemStack.getItem()) == 155) {
+                            playNote(itemStack, slot);
+                            break;
                         }
                     }
                 }
